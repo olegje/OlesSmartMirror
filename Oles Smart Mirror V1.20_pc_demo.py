@@ -48,7 +48,7 @@ class PageOne(tk.Frame):
         button1.pack()
 class Switch(Master_GUI):
     def __init__(self):
-        #here i want to run a command to change to PageOne:
+        #Here i want to run a command to change to PageOne:
         #Master_GUI.show_frame(tk.Frame, PageOne)
         #app.show_frame(PageOne)
         x = 2
