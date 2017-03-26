@@ -21,6 +21,7 @@ yr_url = "http://www.yr.no/sted/Norge/Troms/M%C3%A5lselv/Andselv/varsel.xml" # L
 LOCALE_LOCK = threading.Lock() # What is this?
 
 
+print("test")
 ui_locale = ""
 time_format = 24
 date_format = "%b %d %Y" 
