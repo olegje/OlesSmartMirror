@@ -1,7 +1,12 @@
 #!/usr/bin/python3
 
-import tkinter as tk
-from tkinter import *
+try:
+    import Tkinter as tk
+    from Tkinter import *
+except ImportError:
+    # for Python3
+    import tkinter as tk
+    from tkinter import *
 import time
 
 class Master_GUI(tk.Tk):
