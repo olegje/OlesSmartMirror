@@ -4,17 +4,31 @@
 # Name_of_file.py
 # Requierments.....
 
-import tkinter as tk
-from tkinter import *
+try:
+    import Tkinter as tk
+    from Tkinter import *
+except ImportError:
+    # for Python3
+    import tkinter as tk
+    from tkinter import *
+    
 import locale
 import time
 import threading
 from contextlib import contextmanager
 import os, platform
 import xml.etree.ElementTree as ET
-from urllib import request
+try:
+    from urllib2 import Request
+except ImportError:
+    # for Python3
+    from urllib import request
 from PIL import Image
-import queue
+try:
+    import Queue
+except ImportError:
+    # for Python3
+    import queue
 import subprocess
 import glob
 import Mirrorbuttons as MB
