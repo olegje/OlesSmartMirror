@@ -1,8 +1,11 @@
 #!/usr/bin/python3
 
-
-# Name_of_file.py
-# Requierments.....
+########################################################################
+# Filename    : Oles Smart Mirror V1.20_pi.py
+# Description : Controlling the buttons in the mirror frame
+# Author      : Gjengedal
+# modification: 28.03.2017
+########################################################################
 
 try:
     import Tkinter as tk
@@ -11,7 +14,7 @@ except ImportError:
     # for Python3
     import tkinter as tk
     from tkinter import *
-    
+
 import locale
 import time
 import threading
@@ -32,8 +35,10 @@ except ImportError:
 import subprocess
 import glob
 import Mirrorbuttons as MB
-from pprint import pprint #debuging
-# import more stuff
+
+print("Verison 99.99.99")
+
+
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
 ina_ip = "192.168.11.116"
@@ -441,33 +446,11 @@ class StartPage(tk.Frame):
         self.tempratures = Tempratures(self.right_frame)
         self.tempratures.pack(side=BOTTOM, anchor=E)
 
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button3 = tk.Button(self, text="Page One",
-                            command=lambda: controller.show_frame(PageOne))
-        button3.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
-
 class PageOne(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Page One!!!")
         label.pack(pady=10, padx=10)
-
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
 
 class PageTwo(tk.Frame):
     def __init__(self, parent, controller):
@@ -492,8 +475,8 @@ class Buttons(threading.Thread, Master_GUI):
     def run(self):
 
         buttonControll = MB.ButtonControll()
-        buttonControll.test()
-        #app.show_frame(PageOne)
+        #app.show_frame(PageOne) # Command to change page from this object
+        
 
 if __name__ == "__main__":
     app = Master_GUI()

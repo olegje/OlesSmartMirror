@@ -3,7 +3,7 @@
 # Filename    : Mirrorbuttons.py
 # Description : Controlling the buttons in the mirror frame
 # Author      : Gjengedal
-# modification: 26.03.2017
+# modification: 28.03.2017
 ########################################################################
 import time
 import RPi.GPIO as GPIO
@@ -23,20 +23,16 @@ class ButtonControll():
             for pin in self.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
+                    self.button_states = [False, False, False]
                     if pin == 11:
                         self.button_states[0] = True
                     elif pin == 13:
                         self.button_states[1] = True
                     else:
-                        self.button_states[2] = True   
+                        self.button_states[2] = True
                 else:
                     pass
             time.sleep(0.2)
-    def test(self):
-        while True:
-            app.show_frame(PageOne)
-            time.sleep(1)
-            app.show_frame(StartPage)
     def destroy(self):
         GPIO.cleanup()
 

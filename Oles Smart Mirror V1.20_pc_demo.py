@@ -1,5 +1,12 @@
 #!/usr/bin/python3
 
+########################################################################
+# Filename    : Oles Smart Mirror V1.20_pi.py
+# Description : Controlling the buttons in the mirror frame
+# Author      : Gjengedal
+# modification: 28.03.2017
+########################################################################
+
 try:
     import Tkinter as tk
     from Tkinter import *
