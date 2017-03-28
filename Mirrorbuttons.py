@@ -6,7 +6,10 @@
 # modification: 28.03.2017
 ########################################################################
 import time
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+except:
+    print("ERROR: Unable to load GPIO-library... Using mockup instead")
 class ButtonControll():
     def __init__(self):
         self.buttonPins = [11, 13, 15]
@@ -14,9 +17,13 @@ class ButtonControll():
         self.setup()
     def setup(self):
         print("program is starting")
-        GPIO.setmode(GPIO.BOARD) # Numbers GPIOs by physical location
-        for pin in self.buttonPins:
-            GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) #configure pins and pull up resistor
+        try:
+            GPIO.setmode(GPIO.BOARD) # Numbers GPIOs by physical location
+         
+            for pin in self.buttonPins:
+                GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) #configure pins and pull up resistor
+        except NameError:
+            print("INFO: Not able to use GPIO")
 
     def loop(self):
         while True:
