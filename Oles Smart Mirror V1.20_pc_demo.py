@@ -8,7 +8,7 @@ except ImportError:
     import tkinter as tk
     from tkinter import *
 import time
-
+print("Verison 99.99.99")
 class Master_GUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
