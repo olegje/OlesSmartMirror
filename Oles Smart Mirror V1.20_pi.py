@@ -202,10 +202,14 @@ class Wheather_data(tk.Frame):
                     photo = PhotoImage(file=self.symbol_path)
                     break
                 except TclError:
-                    photo = ImageTk.PhotoImage(Image.open(self.symbol_path))
-                    break
+                    try:
+                        photo = ImageTk.PhotoImage(Image.open(self.symbol_path))
+                        break
+                    except IOError:
+                        self.symbol_path = r"./sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
+                        photo = ImageTk.PhotoImage(Image.open(self.symbol_path))
                 except:
-                    self.symbol_path = r"./sym/b100/%sm.png" %(self.forecast1.get("symbolnumber")) #What does this line? No such file exist. Why the 'm'?
+                    self.symbol_path = r"./sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
                     photo = ImageTk.PhotoImage(Image.open(self.symbol_path))
 
             self.icon_label.config(image=photo)
@@ -226,7 +230,7 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except: #Replace whit ValueError for debugging
+        except: #Replace with ValueError for debugging
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
