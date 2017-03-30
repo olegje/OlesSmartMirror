@@ -28,7 +28,7 @@ except ImportError:
     # for Python3
     from urllib import request
 from PIL import Image
-from PIL import ImageTk
+#from PIL import ImageTk # No mudule named that.
 try:
     import Queue as queue
 except ImportError:
@@ -183,7 +183,7 @@ class Wheather_data(tk.Frame):
 
     def get_wheather_data(self, period):
         try:
-            response = urllib2.urlopen(yr_url) #If this line gives error, change "urllib2" to "request"
+            response = request.urlopen(yr_url) #If this line gives error, change "urllib2" to "request"
             contense = response.read()
             self.root = ET.fromstring(contense) #replaces the first object from the XML data
             self.get_temprature_data(period)
@@ -230,7 +230,8 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except: #Replace with ValueError for debugging
+        except ValueError: #Replace with ValueError for debugging
+            print("INFO: Exception in get_wheater_data, retry in 10s")
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
@@ -364,7 +365,7 @@ class Tempratures(tk.Frame):
             f.close()
         except AttributeError:
             print("INFO: Not able to read temperature. Mocks lines instead")
-            lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625'];
+            lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
         return lines
 
     def read_temp(self):
