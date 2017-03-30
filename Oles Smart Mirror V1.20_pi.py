@@ -2,7 +2,7 @@
 
 ########################################################################
 # Filename    : Oles Smart Mirror V1.20_pi.py
-# Description : Controlling the buttons in the mirror frame
+# Description : Main appication
 # Author      : Gjengedal
 # modification: 28.03.2017
 ########################################################################
