@@ -21,8 +21,8 @@ import threading
 from contextlib import contextmanager
 import os, platform
 import xml.etree.ElementTree as ET
-import urllib2
 try:
+    import urllib2
     from urllib2 import Request as request
 except ImportError:
     # for Python3
