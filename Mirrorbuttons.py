@@ -32,11 +32,6 @@ class ButtonControll():
                 else:
                     pass
             time.sleep(0.2)
-    def test(self):
-        while True:
-            app.show_frame(PageOne)
-            time.sleep(1)
-            app.show_frame(StartPage)
     def destroy(self):
         GPIO.cleanup()
 

@@ -441,19 +441,6 @@ class StartPage(tk.Frame):
         self.tempratures = Tempratures(self.right_frame)
         self.tempratures.pack(side=BOTTOM, anchor=E)
 
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button3 = tk.Button(self, text="Page One",
-                            command=lambda: controller.show_frame(PageOne))
-        button3.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
-
-
 class PageOne(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -491,8 +478,7 @@ class Buttons(threading.Thread, Master_GUI):
 
     def run(self):
 
-        buttonControll = MB.ButtonControll()
-        buttonControll.test()
+        #buttonControll = MB.ButtonControll()
         #app.show_frame(PageOne)
 
 if __name__ == "__main__":
