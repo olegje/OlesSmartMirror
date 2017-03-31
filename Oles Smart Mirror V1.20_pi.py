@@ -478,7 +478,7 @@ class Buttons(threading.Thread, Master_GUI):
 
     def run(self):
 
-        #buttonControll = MB.ButtonControll()
+        buttonControll = MB.ButtonControll()
         #app.show_frame(PageOne)
 
 if __name__ == "__main__":
