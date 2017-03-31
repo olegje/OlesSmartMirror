@@ -201,9 +201,14 @@ class Wheather_data(tk.Frame):
                 try:
                     photo = PhotoImage(file=self.symbol_path)
                     break
-                except:
-                    self.symbol_path = r"/home/pi/Oles Smart Mirror/sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
-                    photo = PhotoImage(file=self.symbol_path)
+                except TclError:
+                    print("TCL error")
+                    try:
+                        self.symbol_path = "./sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
+                    except:
+                        # For Windows
+                        self.symbol_path = os.path("sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
+
 
 
             self.icon_label.config(image=photo)
