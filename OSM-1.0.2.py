@@ -15,7 +15,6 @@ except ImportError:
     # for Python3
     import tkinter as tk
     from tkinter import *
-    
 import locale
 import time
 import threading
@@ -35,7 +34,10 @@ except ImportError:
     import queue
 import subprocess
 import glob
-import Mirrorbuttons as MB
+if platform.system().lower() == "linux":
+    import Mirrorbuttons as MB
+else:
+    print("INFO: Mirrorbuttons not imported")
 from pprint import pprint #debuging
 # import more stuff
 # set variables / setup
@@ -146,8 +148,10 @@ class Home_status(tk.Frame):
 class Wheather_data(tk.Frame):
     def __init__(self, parent, period):
         tk.Frame.__init__(self, parent, bg="black")
+        # Old
+        #self.wind_dir_photo_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/white_arrow.png"
+        self.wind_dir_photo_path = os.path.join("sym", "wind_dir", "white_arrow.png")
 
-        self.wind_dir_photo_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/white_arrow.png"
         # setup of all the frames
         
         self.period_frame = tk.Frame(self, bg="black")
@@ -194,13 +198,16 @@ class Wheather_data(tk.Frame):
             self.windmps_label.config(text=self.forecast1.get("wind_speedmps"))
             self.pressure_label.config(text=self.forecast1.get("pressure"))
             #Symbol icon config
-            self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%s.png" %(self.forecast1.get("symbolnumber"))
+            # old. ad "m" after s for second option
+            #self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%s.png" %(self.forecast1.get("symbolnumber"))
+            self.symbol_path = os.path.join("sym", "b100", "%s.png") %(self.forecast1.get("symbolnumber"))
             while True:
+                print(self.symbol_path)
                 try:
                     photo = PhotoImage(file=self.symbol_path)
                     break
                 except:
-                    self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
+                    self.symbol_path = os.path.join("sym", "b100", "%sm.png") %(self.forecast1.get("symbolnumber"))
                     photo = PhotoImage(file=self.symbol_path)
 
             self.icon_label.config(image=photo)
@@ -210,15 +217,15 @@ class Wheather_data(tk.Frame):
             angle = 360 - (int(float(self.forecast1.get("wind_direction"))))
             size = 100, 100
             rotated_image = src_image.rotate(angle, expand=2).resize(size)
-            rotated_image.save(r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/current.png")
-            self.wind_dir_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/current.png"
+            rotated_image.save(os.path.join("sym", "wind_dir", "current.png"))
+            self.wind_dir_path = self.wind_dir_photo_path = os.path.join("sym", "wind_dir", "current.png")
             photo2 = PhotoImage(file=self.wind_dir_path) #må få denne til å bruke "rotated_image" istedefor
             #photo2 = PhotoImage(rotated_image)
             self.wind_dir_label.config(image=photo2)
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except: #Replace whit ValueError for debugging
+        except ValueError: #Replace whit ValueError for debugging
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
@@ -338,14 +345,21 @@ class Tempratures(tk.Frame):
         os.system('modprobe w1-gpio')
         os.system('modprobe w1-therm')
         self.base_dir = '/sys/bus/w1/devices/'
-        self.device_folder = glob.glob(self.base_dir + '28*')[0]
-        self.device_file = self.device_folder + '/w1_slave'
+        try:
+            self.device_folder = glob.glob(self.base_dir + '28*')[0]
+            self.device_file = self.device_folder + '/w1_slave'
+        except IndexError:
+            print("INFO: unable to read Linux-path")
         self.update()
 
     def read_temp_raw(self):
-        f = open(self.device_file, 'r')
-        lines = f.readlines()
-        f.close()
+        try:
+            f = open(self.device_file, 'r')
+            lines = f.readlines()
+            f.close()
+        except AttributeError:
+            print("INFO: Not able to read temperature. Mocks lines instead")
+            lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
         return lines
 
     def read_temp(self):
@@ -360,15 +374,27 @@ class Tempratures(tk.Frame):
             return '{:.1f}'.format( float(temp_c)/1000 )
     def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
         #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
-        tmp = open('/sys/class/thermal/thermal_zone0/temp')
-        cpu = tmp.read()
-        tmp.close()
+        try:
+            tmp = open('/sys/class/thermal/thermal_zone0/temp')
+            cpu = tmp.read()
+            tmp.close()
+        except IOError:
+            print("INFO: Not able to open file. Mocks lines instead")
+            cpu = 43850
+        
         return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
-        self.out_temp.config(text="Ute: "+ out_temp_value + self.degree_sign)
-        self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
-        self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
-        #self.cpu_load.config(text="Rom: "+ function.. + self.degree_sign)
+        try:
+            self.out_temp.config(text="Ute: "+ out_temp_value + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            #self.cpu_load.config(text="Rom: "+ function.. + self.degree_sign)
+        except NameError:
+            print("INFO: Unable to read temperatures, using mocked values instead")
+            self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            #self.cpu_load.config(text="Rom: "+ function.. + self.degree_sign)
 
         self.out_temp.after(60000, self.update)
    
@@ -481,8 +507,10 @@ class Buttons(threading.Thread, Master_GUI):
         self.daemon = True
 
     def run(self):
-
-        buttonControll = MB.ButtonControll()
+        try:
+            buttonControll = MB.ButtonControll()
+        except NameError:
+            print("INFO: button thread ended")    
         #app.show_frame(PageOne)
 
 if __name__ == "__main__":
