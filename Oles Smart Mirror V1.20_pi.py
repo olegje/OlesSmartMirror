@@ -4,6 +4,8 @@
 # Name_of_file.py
 # Requierments.....
 
+
+print("OSM.1.0.1")
 try:
     import Tkinter as tk
     from Tkinter import *
@@ -143,7 +145,7 @@ class Wheather_data(tk.Frame):
     def __init__(self, parent, period):
         tk.Frame.__init__(self, parent, bg="black")
 
-        self.wind_dir_photo_path = r"/home/pi/Oles Smart Mirror/sym/wind_dir/white_arrow.png"
+        self.wind_dir_photo_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/white_arrow.png"
         # setup of all the frames
         
         self.period_frame = tk.Frame(self, bg="black")
@@ -190,13 +192,13 @@ class Wheather_data(tk.Frame):
             self.windmps_label.config(text=self.forecast1.get("wind_speedmps"))
             self.pressure_label.config(text=self.forecast1.get("pressure"))
             #Symbol icon config
-            self.symbol_path = r"/home/pi/Oles Smart Mirror/sym/b100/%s.png" %(self.forecast1.get("symbolnumber"))
+            self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%s.png" %(self.forecast1.get("symbolnumber"))
             while True:
                 try:
                     photo = PhotoImage(file=self.symbol_path)
                     break
                 except:
-                    self.symbol_path = r"/home/pi/Oles Smart Mirror/sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
+                    self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%sm.png" %(self.forecast1.get("symbolnumber"))
                     photo = PhotoImage(file=self.symbol_path)
 
             self.icon_label.config(image=photo)
@@ -206,8 +208,8 @@ class Wheather_data(tk.Frame):
             angle = 360 - (int(float(self.forecast1.get("wind_direction"))))
             size = 100, 100
             rotated_image = src_image.rotate(angle, expand=2).resize(size)
-            rotated_image.save(r"/home/pi/Oles Smart Mirror/sym/wind_dir/current.png")
-            self.wind_dir_path = r"/home/pi/Oles Smart Mirror/sym/wind_dir/current.png"
+            rotated_image.save(r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/current.png")
+            self.wind_dir_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/current.png"
             photo2 = PhotoImage(file=self.wind_dir_path) #må få denne til å bruke "rotated_image" istedefor
             #photo2 = PhotoImage(rotated_image)
             self.wind_dir_label.config(image=photo2)
