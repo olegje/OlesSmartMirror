@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 ########################################################################
-# Filename    : OSM-1.0.2.py
+# Filename    : OSM-1.1.0.py
 # Description : Main application
 # Author      : Gjengedal
 # modification: 02.04.2017
 ########################################################################
 
-print("OSM.1.0.2")
+print("OSM.1.1.0")
 try:
     import Tkinter as tk
     from Tkinter import *
@@ -148,12 +148,9 @@ class Home_status(tk.Frame):
 class Wheather_data(tk.Frame):
     def __init__(self, parent, period):
         tk.Frame.__init__(self, parent, bg="black")
-        # Old
-        #self.wind_dir_photo_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/wind_dir/white_arrow.png"
         self.wind_dir_photo_path = os.path.join("sym", "wind_dir", "white_arrow.png")
 
         # setup of all the frames
-        
         self.period_frame = tk.Frame(self, bg="black")
         self.period_frame.pack()
         self.label_frame = tk.Frame(self, bg="black")
@@ -215,14 +212,15 @@ class Wheather_data(tk.Frame):
             rotated_image = src_image.rotate(angle, expand=2).resize(size)
             rotated_image.save(os.path.join("sym", "wind_dir", "current.png"))
             self.wind_dir_path = self.wind_dir_photo_path = os.path.join("sym", "wind_dir", "current.png")
-            photo2 = PhotoImage(file=self.wind_dir_path) #må få denne til å bruke "rotated_image" istedefor
+            photo2 = PhotoImage(file=self.wind_dir_path)
+            # Must make this use the rotated_image object instead
             #photo2 = PhotoImage(rotated_image)
             self.wind_dir_label.config(image=photo2)
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except ValueError:
-             #Replace whit ValueError for debugging
+        except:
+             #Replace with ValueError for debugging
             print("Exception in get_wheather_data")
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
