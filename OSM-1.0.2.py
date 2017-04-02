@@ -225,7 +225,9 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except ValueError: #Replace whit ValueError for debugging
+        except ValueError:
+             #Replace whit ValueError for debugging
+            print("Exception in get_wheather_data")
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
