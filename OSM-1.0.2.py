@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 ########################################################################
-# Filename    : Oles Smart Mirror V1.20_pi.py
-# Description : Main appication
+# Filename    : OSM-1.0.2.py
+# Description : Main application
 # Author      : Gjengedal
 # modification: 02.04.2017
 ########################################################################
