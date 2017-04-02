@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 
+########################################################################
+# Filename    : Oles Smart Mirror V1.20_pi.py
+# Description : Main appication
+# Author      : Gjengedal
+# modification: 02.04.2017
+########################################################################
 
-# Name_of_file.py
-# Requierments.....
-
-
-print("OSM.1.0.1")
+print("OSM.1.0.2")
 try:
     import Tkinter as tk
     from Tkinter import *

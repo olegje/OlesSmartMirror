@@ -3,7 +3,7 @@
 # Filename    : Mirrorbuttons.py
 # Description : Controlling the buttons in the mirror frame
 # Author      : Gjengedal
-# modification: 26.03.2017
+# modification: 02.04.2017
 ########################################################################
 import time
 import RPi.GPIO as GPIO
