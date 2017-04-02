@@ -198,17 +198,13 @@ class Wheather_data(tk.Frame):
             self.windmps_label.config(text=self.forecast1.get("wind_speedmps"))
             self.pressure_label.config(text=self.forecast1.get("pressure"))
             #Symbol icon config
-            # old. ad "m" after s for second option
-            #self.symbol_path = r"/home/pi/OSM-Live/OlesSmartMirror/sym/b100/%s.png" %(self.forecast1.get("symbolnumber"))
             self.symbol_path = os.path.join("sym", "b100", "%s.png") %(self.forecast1.get("symbolnumber"))
             while True:
-                print(self.symbol_path)
                 try:
                     photo = PhotoImage(file=self.symbol_path)
                     break
                 except:
                     self.symbol_path = os.path.join("sym", "b100", "%sm.png") %(self.forecast1.get("symbolnumber"))
-                    photo = PhotoImage(file=self.symbol_path)
 
             self.icon_label.config(image=photo)
             self.icon_label.image = photo
