@@ -8,7 +8,7 @@
 import time
 import RPi.GPIO as GPIO
 import pprint
-class ButtonControll():
+class ButtonControll(app):
     def __init__(self):
         self.buttonPins = [11, 13, 15]
         self.button_states = [False, False, False]
@@ -21,7 +21,6 @@ class ButtonControll():
 
     def loop(self, app):
         while True:
-            print("while")
             for pin in self.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
