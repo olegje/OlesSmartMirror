@@ -26,9 +26,10 @@ class ButtonControll():
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
                     if pin == 11:
-                        print(str(app.frames))
+                        for key, value in app.frames.items():
+                            print(key, value)
                         self.button_states[0] = True
-                        app.show_frame(app.frames[1])
+                        #app.show_frame(app.frames[PageOne])
                     elif pin == 13:
                         self.button_states[1] = True
                     else:
