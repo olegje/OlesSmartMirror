@@ -36,10 +36,11 @@ import subprocess
 import glob
 if platform.system().lower() == "linux":
     import Mirrorbuttons as MB
+    import RPi.GPIO as GPIO
 else:
     print("INFO: Mirrorbuttons not imported")
 from pprint import pprint #debuging
-import RPi.GPIO as GPIO
+
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
@@ -507,8 +508,8 @@ class Buttons(threading.Thread, Master_GUI):
         try:
             buttonControll = MB.ButtonControll()
             self.check_buttons(buttonControll)
-        #except NameError:
-            #print("INFO: button thread ended")
+        except NameError:
+            print("INFO: button thread ended")
         except KeyboardInterrupt:
             buttonControll.destroy()
             t2.exit()
