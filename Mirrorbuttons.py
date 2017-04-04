@@ -3,11 +3,9 @@
 # Filename    : Mirrorbuttons.py
 # Description : Controlling the buttons in the mirror frame
 # Author      : Gjengedal
-# modification: 02.04.2017
+# modification: 04.04.2017
 ########################################################################
-import time
 import RPi.GPIO as GPIO
-import pprint
 class ButtonControll():
     def __init__(self):
         self.buttonPins = [11, 13, 15]
@@ -18,19 +16,6 @@ class ButtonControll():
         GPIO.setmode(GPIO.BOARD) # Numbers GPIOs by physical location
         for pin in self.buttonPins:
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) #configure pins and pull up resistor
-    def check_buttons(self):
-        self.button_states = [False, False, False]
-        for pin in self.buttonPins:
-            if GPIO.input(pin) == GPIO.LOW:
-                print("Pin% is preesed" %pin)
-                if pin == 11:
-                    self.button_states[0] = True
-                elif pin == 13:
-                    self.button_states[1] = True
-                else:
-                    self.button_states[2] = True
-            else:
-                pass
     def destroy(self):
         GPIO.cleanup()
 
