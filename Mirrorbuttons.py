@@ -8,7 +8,7 @@
 import time
 import RPi.GPIO as GPIO
 import pprint
-class ButtonControll(app):
+class ButtonControll():
     def __init__(self):
         self.buttonPins = [11, 13, 15]
         self.button_states = [False, False, False]
@@ -37,7 +37,7 @@ class ButtonControll(app):
 if __name__ == '__main__':
     buttonControll = ButtonControll()
     try:
-        buttonControll.loop()
+        buttonControll.check_buttons()
     except KeyboardInterrupt:
         buttonControll.destroy()
 
