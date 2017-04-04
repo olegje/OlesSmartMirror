@@ -400,7 +400,7 @@ class Widget(tk.Frame):
 
         self.label1 = Label(self, text="test text")
         self.label1.pack()
-class Master_GUI(tk.Tk, PageOne):
+class Master_GUI(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
@@ -467,7 +467,7 @@ class StartPage(tk.Frame):
         self.tempratures = Tempratures(self.right_frame)
         self.tempratures.pack(side=BOTTOM, anchor=E)
 
-class PageOne(tk.Frame, Master_GUI):
+class PageOne(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Page One!!!")
