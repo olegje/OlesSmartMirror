@@ -22,13 +22,12 @@ class ButtonControll():
     def loop(self, app):
         while True:
             print("while")
-            print(app.state)
             for pin in self.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
                     if pin == 11:
                         self.button_states[0] = True
-                        app.show_frame(PageOne)
+                        app.show_frame(app.PageOne)
                     elif pin == 13:
                         self.button_states[1] = True
                     else:
