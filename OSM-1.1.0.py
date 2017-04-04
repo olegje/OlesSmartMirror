@@ -504,7 +504,7 @@ class Buttons(threading.Thread, Master_GUI):
 
     def run(self):
         try:
-            buttonControll = MB.ButtonControll(app)
+            buttonControll = MB.ButtonControll()
             while True:
                 buttonControll.check_buttons()
                 for button in buttonControll.button_states:
