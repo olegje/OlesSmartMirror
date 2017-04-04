@@ -506,8 +506,8 @@ class Buttons(threading.Thread, Master_GUI):
         try:
             buttonControll = MB.ButtonControll()
             self.check_buttons(buttonControll)
-        except NameError:
-            print("INFO: button thread ended")
+        #except NameError:
+            #print("INFO: button thread ended")
         except KeyboardInterrupt:
             buttonControll.destroy()
             t2.exit()
