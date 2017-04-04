@@ -467,7 +467,7 @@ class StartPage(tk.Frame):
         self.tempratures = Tempratures(self.right_frame)
         self.tempratures.pack(side=BOTTOM, anchor=E)
 
-class PageOne(tk.Frame):
+class PageOne(tk.Frame, Master_GUI):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="Page One!!!")
