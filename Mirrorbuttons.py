@@ -18,17 +18,19 @@ class ButtonControll():
         for pin in self.buttonPins:
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) #configure pins and pull up resistor
 
-    def loop(self):
+    def loop(self, app):
         while True:
+            print("while")
             for pin in self.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
                     if pin == 11:
                         self.button_states[0] = True
+                        app.show_frame(PageOne)
                     elif pin == 13:
                         self.button_states[1] = True
                     else:
-                        self.button_states[2] = True   
+                        self.button_states[2] = True
                 else:
                     pass
             time.sleep(0.2)
