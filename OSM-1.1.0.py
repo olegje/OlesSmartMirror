@@ -505,9 +505,9 @@ class Buttons(threading.Thread, Master_GUI):
     def run(self):
         try:
             buttonControll = MB.ButtonControll()
-            buttonControll.loop(app, app.PageOne)
+            buttonControll.loop(app)
         except NameError:
-            print("INFO: button thread ended")    
+            print("INFO: button thread ended")
         
 
 if __name__ == "__main__":
