@@ -39,6 +39,7 @@ if platform.system().lower() == "linux":
 else:
     print("INFO: Mirrorbuttons not imported")
 from pprint import pprint #debuging
+import RPi.GPIO as GPIO
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
