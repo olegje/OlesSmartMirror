@@ -505,18 +505,26 @@ class Buttons(threading.Thread, Master_GUI):
     def run(self):
         try:
             buttonControll = MB.ButtonControll()
-            while True:
-                buttonControll.check_buttons()
-                for button in buttonControll.button_states:
-                    if button == True:
-                        app.show_frame(PageOne)
-                    else:
-                        pass
-            time.sleep(0.2)
+            self.check_buttons(buttonControll)
         except NameError:
             print("INFO: button thread ended")
-        
-
+        except KeyboardInterrupt:
+            buttonControll.destroy()
+            t2.exit()
+    def check_buttons(self, buttonControl):
+        while True:
+            for pin in buttonControl.buttonPins:
+                if GPIO.input(pin) == GPIO.LOW:
+                    print("Pin% is preesed" %pin)
+                    if pin == 11:
+                        app.show_frame(StartPage)
+                    elif pin == 13:
+                        app.show_frame(PageOne)
+                    else:
+                        app.show_frame(PageTwo)
+                else:
+                    pass
+            time.sleep(0.2)
 if __name__ == "__main__":
     app = Master_GUI()
     #t1 = Pinger(name="ping_thread")
