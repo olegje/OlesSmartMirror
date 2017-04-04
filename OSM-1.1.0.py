@@ -400,7 +400,7 @@ class Widget(tk.Frame):
 
         self.label1 = Label(self, text="test text")
         self.label1.pack()
-class Master_GUI(tk.Tk):
+class Master_GUI(tk.Tk, PageOne):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
