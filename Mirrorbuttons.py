@@ -18,7 +18,7 @@ class ButtonControll():
         for pin in self.buttonPins:
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) #configure pins and pull up resistor
 
-    def loop(self, app):
+    def loop(self, app, PageOne):
         while True:
             print("while")
             for pin in self.buttonPins:
