@@ -22,7 +22,7 @@ class ButtonControll():
     def loop(self, app):
         while True:
             print("while")
-            pprint(dir(app))
+            pprint(vars(app))
             for pin in self.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
                     print("Pin% is preesed" %pin)
