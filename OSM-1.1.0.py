@@ -48,7 +48,7 @@ ina_ip = "192.168.11.116"
 q1 = queue.Queue() # queue to pass variabels between threads
 q2 = queue.Queue()
 yr_url = "http://www.yr.no/sted/Norge/Troms/M%C3%A5lselv/Andselv/varsel.xml" # Location spesified url to xml file
-sun_rise = "d" # "m" if sun never rise "d" if sun rises
+sun_rise = "d" # "m" if sun never rise "d" if sun rises, not in use.
 ui_locale = ""
 time_format = 24
 date_format = "%b %d %Y"
@@ -203,7 +203,8 @@ class Wheather_data(tk.Frame):
                     photo = PhotoImage(file=self.symbol_path)
                     break
                 except:
-                    self.symbol_path = os.path.join("sym", "b100", "%sm.png") %(self.forecast1.get("symbolnumber"))
+                    # Need to make this change to m in the right dates of the year
+                    self.symbol_path = os.path.join("sym", "b100", "%sd.png") %(self.forecast1.get("symbolnumber"))
 
             self.icon_label.config(image=photo)
             self.icon_label.image = photo
