@@ -4,7 +4,7 @@
 # Filename    : OSM-1.1.0.py
 # Description : Main application
 # Author      : Gjengedal
-# modification: 04.04.2017
+# modification: 07.06.2017
 ########################################################################
 
 print("OSM.1.1.0")
@@ -258,10 +258,6 @@ class Wheather_data(tk.Frame):
             temp_data = first_station.find("temperature")
             global out_temp_value
             out_temp_value = float(temp_data.attrib.get("value"))
-            if out_temp_value < 10:
-                out_temp_value = "  " + str(out_temp_value)
-            else:
-                pass
         else:
             pass
 
@@ -331,14 +327,12 @@ class Tempratures(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg="black")
 
-        self.rom_temp = Label(self, text="Rom: 22.3* C", font=('Helvetica', 20), fg="white", bg="black")
+        self.rom_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.rom_temp.pack(side=TOP)
         self.out_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.out_temp.pack(side=TOP, anchor="e")
         self.cpu_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.cpu_temp.pack(side=TOP, anchor="e")
-        #self.cpu_load = Label(self, text="Load: 30%", font=('Helvetica', 12), fg="white", bg="black")
-        #self.cpu_load.pack(side=TOP)
         self.degree_sign = u'\N{DEGREE CELSIUS}'
 
         os.system('modprobe w1-gpio')
@@ -384,16 +378,18 @@ class Tempratures(tk.Frame):
         return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
         try:
-            self.out_temp.config(text="Ute: "+ out_temp_value + self.degree_sign)
             self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
-            #self.cpu_load.config(text="Rom: "+ function.. + self.degree_sign)
+            if out_temp_value >= 10:
+                self.out_temp.config(text="Ute: "+ str(out_temp_value) + self.degree_sign)
+            else:
+                # adds an extra whitespace to line the number on screen       
+                self.out_temp.config(text="Ute:  "+ str(out_temp_value) + self.degree_sign)
         except NameError:
             print("INFO: Unable to read temperatures, using mocked values instead")
             self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
             self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
-            #self.cpu_load.config(text="Rom: "+ function.. + self.degree_sign)
 
         self.out_temp.after(60000, self.update)
    
