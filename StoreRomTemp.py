@@ -30,7 +30,7 @@ class Tempratures():
             config = {
                 'user': 'smart_mirror',
                 'password': 'legobil',
-                'host': '192.168.11.8',
+                'host': '192.168.12.8',
                 'database': 'Tempratures',
                 'raise_on_warnings': True,
             }
