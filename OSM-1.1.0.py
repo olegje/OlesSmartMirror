@@ -39,7 +39,6 @@ if platform.system().lower() == "linux":
     import RPi.GPIO as GPIO
 else:
     print("INFO: Mirrorbuttons not imported")
-from pprint import pprint #debuging
 
 # import more stuff
 # set variables / setup
@@ -222,9 +221,9 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.image = photo2
 
             self.period_frame.after(60000, self.get_wheather_data, period)
-        except:
+        except Exception as err:
              #Replace with ValueError for debugging
-            print("Exception in get_wheather_data")
+            print("Exception in get_wheather_data:  ", err)
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
