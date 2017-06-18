@@ -4,7 +4,7 @@
 # Filename    : OSM-1.1.0.py
 # Description : Main application
 # Author      : Gjengedal
-# modification: 07.06.2017
+# modification: 18.06.2017
 ########################################################################
 
 print("OSM.1.1.0")

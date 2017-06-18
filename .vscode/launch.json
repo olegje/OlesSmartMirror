@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "stopOnEntry": true,
-            "pythonPath": "${config.python.pythonPath}",
+            "pythonPath": "C:/Users/ole/AppData/Local/Programs/Python/Python35-32/python.exe",
             "program": "${file}",
             "cwd": "${workspaceRoot}",
             "debugOptions": [
