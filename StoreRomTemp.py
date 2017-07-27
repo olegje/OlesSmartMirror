@@ -28,8 +28,8 @@ class Tempratures():
     def connect_to_DB(self):
         try:
             config = {
-                'user': 'smart_mirror',
-                'password': 'legobil',
+                'user': 'PI_Mirror',
+                'password': 'mirror',
                 'host': '192.168.12.8',
                 'database': 'Tempratures',
                 'raise_on_warnings': True,
