@@ -220,7 +220,7 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.config(image=photo2)
             self.wind_dir_label.image = photo2
 
-            self.period_frame.after(60000, self.get_wheather_data, period)
+            self.period_frame.after(300000, self.get_wheather_data, period)
         except Exception as err:
              #Replace with ValueError for debugging
             print("Exception in get_wheather_data:  ", err)
