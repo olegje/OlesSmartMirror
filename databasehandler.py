@@ -108,8 +108,8 @@ class Tempratures():
             logger.debug("Out tempratures retrived")
             print(self.out_temp_history)
             cursor.close()
-        #except:
-            #logger.error("Error!")    
+        except IndexError:
+            logger.error("Error!")
 
 if __name__ == '__main__':
     logger.info('Script started as main')
