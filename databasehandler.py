@@ -103,7 +103,7 @@ class Tempratures():
     def retrive_out_temp(self):
         try:
             cursor = self.cnx.cursor()
-            query = ("SELECT first_name, last_name, hire_date FROM employees ")
+            query = ("SELECT * FROM `Outdoor` ORDER BY `Time` DESC LIMIT 200")# 288 times 5 minutes between inserts = 24 hours
             self.out_temp_history = cursor.execute(query)
             logger.debug("Out tempratures retrived")
             cursor.close()
