@@ -340,8 +340,9 @@ class Tempratures(tk.Frame):
         self.cpu_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.cpu_temp.pack(side=TOP, anchor="e")
         self.degree_sign = u'\N{DEGREE CELSIUS}'
-        DBHandle.connect_to_DB()
         self.update()
+        DBHandle.connect_to_DB()        
+        self.DB_communication()
 
     def update(self):
         try:
@@ -358,8 +359,13 @@ class Tempratures(tk.Frame):
             self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
 
-        DBHandle.insert_to_DB()
+        #DBHandle.insert_to_DB() # This causes tempratures to be recorded every minute. to often...
         self.out_temp.after(60000, self.update)
+    def DB_communication(self):
+        DBHandle.insert_to_DB()
+        self.DB_communication.after(10000, self.DB_communication)
+        
+
    
 class Widget(tk.Frame):
     def __init__(self, parent):
@@ -464,7 +470,7 @@ class PageTwo(tk.Frame):
                             command=lambda: controller.show_frame(PageOne))
         button2.pack()
         logger.debug("PageTwo Started")
-        
+
 class Buttons(threading.Thread, Master_GUI):
 
     def __init__(self, *args, **kwargs):
