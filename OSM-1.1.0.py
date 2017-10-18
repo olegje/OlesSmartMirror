@@ -39,6 +39,7 @@ if platform.system().lower() == "linux":
     import RPi.GPIO as GPIO
 else:
     print("INFO: Mirrorbuttons not imported")
+import databasehandler
 import logging
 import logging.config
 logging.config.fileConfig('logging.conf')
@@ -349,26 +350,6 @@ class Tempratures(tk.Frame):
             logger.info("INFO: unable to read Linux-path")
         self.update()
 
-    def read_temp_raw(self):
-        try:
-            f = open(self.device_file, 'r')
-            lines = f.readlines()
-            f.close()
-        except AttributeError:
-            logger.info("INFO: Not able to read temperature. Mocks lines instead")
-            lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
-        return lines
-
-    def read_temp(self):
-        lines = self.read_temp_raw()
-        while lines[0].strip()[-3:] != 'YES':
-            time.sleep(0.2)
-            lines = self.read_temp_raw()
-        equals_pos = lines[1].find('t=')
-        if equals_pos != -1:
-            temp_string = lines[1][equals_pos+2:]
-            temp_c = float(temp_string)
-            return '{:.1f}'.format( float(temp_c)/1000 )
     def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
         #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
         try:
@@ -382,7 +363,7 @@ class Tempratures(tk.Frame):
         return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
         try:
-            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ databasehandler.Tempratures.read_room_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
             if out_temp_value >= 10:
                 self.out_temp.config(text="Ute: "+ str(out_temp_value) + self.degree_sign)
