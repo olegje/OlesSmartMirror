@@ -363,7 +363,7 @@ class Tempratures(tk.Frame):
         self.out_temp.after(60000, self.update)
     def DB_communication(self):
         DBHandle.insert_to_DB()
-        self.out_temp.after(10000, self.DB_communication)
+        self.out_temp.after(300000, self.DB_communication)
         
 
    
