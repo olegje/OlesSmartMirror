@@ -41,12 +41,10 @@ else:
     print("INFO: Mirrorbuttons not imported")
 import logging
 import logging.config
+logging.config.fileConfig('logging.conf')
 # create logger
 logger = logging.getLogger('rotatingLogger')
-logger.error("Application started")
 logger.info("Application started")
-logger.debug("Application started")
-
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
