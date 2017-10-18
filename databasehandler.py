@@ -112,5 +112,7 @@ class Tempratures():
             logger.error("Error!")
 
 if __name__ == '__main__':
-    logger.info('Script started as main')
-    
+    print('Script started as main')
+    self.connect_to_DB()
+    self.retrive_out_temp()
+
