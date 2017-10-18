@@ -43,7 +43,7 @@ import logging
 import logging.config
 # create logger
 logger = logging.getLogger('rotatingLogger')
-logger.info("Application started")
+logger.error("Application started")
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
