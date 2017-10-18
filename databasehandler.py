@@ -101,13 +101,7 @@ class Tempratures():
             cpu = 66666
         
         return '{:.1f}'.format( float(cpu)/1000 )
-    def update(self):
 
-        try:
-            self.temp = self.read_temp()
-        except NameError:
-            logger.warning("Unable to read temperatures, using mock up as 22.1")
-            self.temp = 22.1
 
 if __name__ == '__main__':
     logger.info('Script started as main')

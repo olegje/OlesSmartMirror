@@ -339,6 +339,7 @@ class Tempratures(tk.Frame):
         self.cpu_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.cpu_temp.pack(side=TOP, anchor="e")
         self.degree_sign = u'\N{DEGREE CELSIUS}'
+        DBHandle.connect_to_DB()
         self.update()
 
     def update(self):
@@ -356,6 +357,7 @@ class Tempratures(tk.Frame):
             self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
 
+        DBHandle.insert_to_DB()
         self.out_temp.after(60000, self.update)
    
 class Widget(tk.Frame):
