@@ -447,6 +447,7 @@ class PageOne(tk.Frame):
         button2 = tk.Button(self, text="Page Two",
                             command=lambda: controller.show_frame(PageTwo))
         button2.pack()
+        logger.debug("PageOne Started")
 
 
 class PageTwo(tk.Frame):
@@ -462,6 +463,8 @@ class PageTwo(tk.Frame):
         button2 = tk.Button(self, text="Page One",
                             command=lambda: controller.show_frame(PageOne))
         button2.pack()
+        logger.debug("PageTwo Started")
+        
 class Buttons(threading.Thread, Master_GUI):
 
     def __init__(self, *args, **kwargs):
