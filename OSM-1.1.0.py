@@ -229,7 +229,8 @@ class Wheather_data(tk.Frame):
             self.period_frame.after(300000, self.get_wheather_data, period)
         except Exception as err:
              #Replace with ValueError for debugging
-            logger.error("Exception in get_wheather_data:  ", err)
+            logger.error("Exception in get_wheather_data:  ")
+            logger.error(err)
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
