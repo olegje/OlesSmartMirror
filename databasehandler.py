@@ -68,7 +68,6 @@ class Tempratures():
             logger.info('Rom temprature inserted')
         except:
             logger.warning("Cannot insert, no connection to database, connecting...")
-            time.sleep(3) # to stop looping in error mode
             self.connect_to_DB()
     def read_temp_raw(self):
         try:
