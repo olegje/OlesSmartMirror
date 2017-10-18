@@ -90,7 +90,17 @@ class Tempratures():
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string)
             return '{:.1f}'.format( float(temp_c)/1000 )
-
+    def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
+        #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
+        try:
+            tmp = open('/sys/class/thermal/thermal_zone0/temp')
+            cpu = tmp.read()
+            tmp.close()
+        except IOError:
+            logger.info("INFO: Not able to open file. Mocks lines instead")
+            cpu = 66666
+        
+        return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
 
         try:

@@ -339,32 +339,12 @@ class Tempratures(tk.Frame):
         self.cpu_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.cpu_temp.pack(side=TOP, anchor="e")
         self.degree_sign = u'\N{DEGREE CELSIUS}'
-
-        os.system('modprobe w1-gpio')
-        os.system('modprobe w1-therm')
-        self.base_dir = '/sys/bus/w1/devices/'
-        try:
-            self.device_folder = glob.glob(self.base_dir + '28*')[0]
-            self.device_file = self.device_folder + '/w1_slave'
-        except IndexError:
-            logger.info("INFO: unable to read Linux-path")
         self.update()
 
-    def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
-        #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
-        try:
-            tmp = open('/sys/class/thermal/thermal_zone0/temp')
-            cpu = tmp.read()
-            tmp.close()
-        except IOError:
-            logger.info("INFO: Not able to open file. Mocks lines instead")
-            cpu = 43850
-        
-        return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
         try:
             self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
-            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
             if out_temp_value >= 10:
                 self.out_temp.config(text="Ute: "+ str(out_temp_value) + self.degree_sign)
             else:
@@ -373,8 +353,8 @@ class Tempratures(tk.Frame):
         except NameError:
             logger.info("INFO: Unable to read temperatures, using mocked values instead")
             self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
-            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
-            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
 
         self.out_temp.after(60000, self.update)
    
@@ -491,7 +471,7 @@ class Buttons(threading.Thread, Master_GUI):
             buttonControll = MB.ButtonControll()
             self.check_buttons(buttonControll)
         except NameError:
-            print("INFO: button thread ended")
+            logger.info("button thread ended")
         except KeyboardInterrupt:
             buttonControll.destroy()
             t2.exit()
@@ -499,7 +479,7 @@ class Buttons(threading.Thread, Master_GUI):
         while True:
             for pin in buttonControl.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
-                    print("Pin% is preesed" %pin)
+                    logger.info("Pin% is preesed" %pin)
                     if pin == 11:
                         app.show_frame(StartPage)
                     elif pin == 13:
