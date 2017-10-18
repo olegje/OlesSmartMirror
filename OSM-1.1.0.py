@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
 ########################################################################
-# Filename    : OSM-1.1.0.py
+# Filename    : OSM-1.2.0.py
 # Description : Main application
 # Author      : Gjengedal
-# modification: 18.06.2017
+# modification: 18.10.2017
 ########################################################################
 
 print("OSM.1.1.0")
