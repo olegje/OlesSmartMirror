@@ -69,7 +69,6 @@ class Tempratures():
         except:
             logger.warning("Cannot insert, no connection to database, connecting...")
             self.connect_to_DB()
-            logger.info("Retrying insert in 5 minutes")
     def read_temp_raw(self):
         try:
             f = open(self.device_file, 'r')
