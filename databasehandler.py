@@ -113,6 +113,7 @@ class Tempratures():
 
 if __name__ == '__main__':
     print('Script started as main')
-    self.connect_to_DB()
-    self.retrive_out_temp()
+    TMP = Tempratures()
+    TMP.connect_to_DB()
+    TMP.retrive_out_temp()
 
