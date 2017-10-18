@@ -106,6 +106,7 @@ class Tempratures():
             query = ("SELECT * FROM `Outdoor` ORDER BY `Time` DESC LIMIT 200")# 288 times 5 minutes between inserts = 24 hours
             self.out_temp_history = cursor.execute(query)
             logger.debug("Out tempratures retrived")
+            print(self.out_temp_history)
             cursor.close()
         except:
             logger.error("Error!")    
