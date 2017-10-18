@@ -105,9 +105,11 @@ class Tempratures():
         try:
             cursor = self.cnx.cursor()
             query = ("SELECT first_name, last_name, hire_date FROM employees ")
-        self.out_temp = cursor.execute(query)
-        cursor.close()
-        cnx.close()
+            self.out_temp = cursor.execute(query)
+            logger.debug("Out tempratures retrived")
+            cursor.close()
+        except:
+            logger.error("Error!")    
 
 if __name__ == '__main__':
     logger.info('Script started as main')
