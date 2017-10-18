@@ -7,7 +7,7 @@
 # modification: 18.10.2017
 ########################################################################
 
-print("OSM.1.1.0")
+print("OSM.1.2.0")
 try:
     import Tkinter as tk
     from Tkinter import *
@@ -39,7 +39,10 @@ if platform.system().lower() == "linux":
     import RPi.GPIO as GPIO
 else:
     print("INFO: Mirrorbuttons not imported")
-
+import logging
+import logging.config
+# create logger
+logger = logging.getLogger('rotatingLogger')
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
@@ -223,7 +226,7 @@ class Wheather_data(tk.Frame):
             self.period_frame.after(300000, self.get_wheather_data, period)
         except Exception as err:
              #Replace with ValueError for debugging
-            print("Exception in get_wheather_data:  ", err)
+            logger.error("Exception in get_wheather_data:  ", err)
             self.period_label.config(text="cannot get weather")
             self.period_frame.after(10000, self.get_wheather_data, period)
 
@@ -341,7 +344,7 @@ class Tempratures(tk.Frame):
             self.device_folder = glob.glob(self.base_dir + '28*')[0]
             self.device_file = self.device_folder + '/w1_slave'
         except IndexError:
-            print("INFO: unable to read Linux-path")
+            logger.info("INFO: unable to read Linux-path")
         self.update()
 
     def read_temp_raw(self):
@@ -350,7 +353,7 @@ class Tempratures(tk.Frame):
             lines = f.readlines()
             f.close()
         except AttributeError:
-            print("INFO: Not able to read temperature. Mocks lines instead")
+            logger.info("INFO: Not able to read temperature. Mocks lines instead")
             lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
         return lines
 
@@ -371,7 +374,7 @@ class Tempratures(tk.Frame):
             cpu = tmp.read()
             tmp.close()
         except IOError:
-            print("INFO: Not able to open file. Mocks lines instead")
+            logger.info("INFO: Not able to open file. Mocks lines instead")
             cpu = 43850
         
         return '{:.1f}'.format( float(cpu)/1000 )
@@ -385,7 +388,7 @@ class Tempratures(tk.Frame):
                 # adds an extra whitespace to line the number on screen       
                 self.out_temp.config(text="Ute:  "+ str(out_temp_value) + self.degree_sign)
         except NameError:
-            print("INFO: Unable to read temperatures, using mocked values instead")
+           logger.info("INFO: Unable to read temperatures, using mocked values instead")
             self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
             self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
