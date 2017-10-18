@@ -104,7 +104,7 @@ class Tempratures():
         try:
             cursor = self.cnx.cursor()
             query = ("SELECT first_name, last_name, hire_date FROM employees ")
-            self.out_temp = cursor.execute(query)
+            self.out_temp_history = cursor.execute(query)
             logger.debug("Out tempratures retrived")
             cursor.close()
         except:
