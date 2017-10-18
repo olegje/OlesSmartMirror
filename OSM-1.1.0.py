@@ -3,7 +3,7 @@
 ########################################################################
 # Filename    : OSM-1.2.0.py
 # Description : Main application
-# Author      : Gjengedal
+# Author      : Ole Jonny Gjengedal
 # modification: 18.10.2017
 ########################################################################
 
