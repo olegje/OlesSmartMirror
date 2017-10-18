@@ -510,7 +510,7 @@ class Buttons(threading.Thread, Master_GUI):
                     pass
             time.sleep(0.2)
 if __name__ == "__main__":
-    DBHandle = databasehandler()
+    DBHandle = databasehandler.Tempratures()
     app = Master_GUI()
     #t1 = Pinger(name="ping_thread")
     #t1.start()
