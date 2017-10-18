@@ -388,7 +388,7 @@ class Tempratures(tk.Frame):
                 # adds an extra whitespace to line the number on screen       
                 self.out_temp.config(text="Ute:  "+ str(out_temp_value) + self.degree_sign)
         except NameError:
-           logger.info("INFO: Unable to read temperatures, using mocked values instead")
+            logger.info("INFO: Unable to read temperatures, using mocked values instead")
             self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
             self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
