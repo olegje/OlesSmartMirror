@@ -56,18 +56,19 @@ class Tempratures():
     def insert_to_DB(self):
         try:
             cursor = self.cnx.cursor()
-            add_temprature = ("INSERT INTO Outdoor"
+            add_temprature = ("INSERT INTO Hallway"
                               "(temprature) "
-                              "VALUES (%s)" %self.temp)
+                              "VALUES (%s)" %self.read_room_temp())
             # Insert new temprature
             cursor.execute(add_temprature)
             #emp_no = cursor.lastrowid
             # Make sure data is committed to the database
             self.cnx.commit()
             cursor.close()
-            logger.info('Temprature inserted')
+            logger.info('Rom temprature inserted')
         except:
             logger.warning("Cannot insert, no connection to database, connecting...")
+            time.sleep(3) # to stop looping in error mode
             self.connect_to_DB()
     def read_temp_raw(self):
         try:
@@ -89,8 +90,8 @@ class Tempratures():
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string)
             return '{:.1f}'.format( float(temp_c)/1000 )
-    def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
-        #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
+    def get_cpu_temp(self):
+
         try:
             tmp = open('/sys/class/thermal/thermal_zone0/temp')
             cpu = tmp.read()
@@ -100,7 +101,13 @@ class Tempratures():
             cpu = 66666
         
         return '{:.1f}'.format( float(cpu)/1000 )
-
+    def retrive_out_temp(self):
+        try:
+            cursor = self.cnx.cursor()
+            query = ("SELECT first_name, last_name, hire_date FROM employees ")
+        self.out_temp = cursor.execute(query)
+        cursor.close()
+        cnx.close()
 
 if __name__ == '__main__':
     logger.info('Script started as main')
