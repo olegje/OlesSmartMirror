@@ -363,7 +363,7 @@ class Tempratures(tk.Frame):
         return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
         try:
-            self.rom_temp.config(text="Rom: "+ databasehandler.Tempratures.read_room_temp(self) + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp(self) + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
             if out_temp_value >= 10:
                 self.out_temp.config(text="Ute: "+ str(out_temp_value) + self.degree_sign)
@@ -510,6 +510,7 @@ class Buttons(threading.Thread, Master_GUI):
                     pass
             time.sleep(0.2)
 if __name__ == "__main__":
+    DBHandle = databasehandler()
     app = Master_GUI()
     #t1 = Pinger(name="ping_thread")
     #t1.start()
