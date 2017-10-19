@@ -403,7 +403,7 @@ class Master_GUI(tk.Tk):
             frame.grid_rowconfigure(0, weight=1)
             frame.grid_columnconfigure(0, weight=1)
 
-        self.show_frame(StartPage)
+        self.show_frame(PageOne)
 
     def show_frame(self, cont):
         frame = self.frames[cont] # local variable
@@ -459,6 +459,8 @@ class PageOne(tk.Frame):
         button2 = tk.Button(self, text="Page Two",
                             command=lambda: controller.show_frame(PageTwo))
         button2.pack()
+        self.Temp_hist = Temprature_history(self)
+        self.Temp_hist.pack()
         logger.debug("PageOne Started")
 
 
