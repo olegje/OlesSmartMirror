@@ -102,11 +102,11 @@ class Tempratures():
         return '{:.1f}'.format( float(cpu)/1000 )
     def retrive_out_temp(self):
         try:
-            cursor = self.cnx.cursor()
-            query = ("SELECT `Time` `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 288")# 288 times 5 minutes between inserts = 24 hours
-            self.out_temp_history = cursor.execute(query)
+            cursor = self.cnx.cursor(buffered=True)
+            query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 10")# 288 times 5 minutes between inserts = 24 hours
+            cursor.execute(query)
             logger.debug("Out tempratures retrived")
-            print(self.out_temp_history)
+            self.out_temp_history = cursor
             cursor.close()
         except IndexError:
             logger.error("Error!")
