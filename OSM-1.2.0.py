@@ -368,18 +368,30 @@ class Tempratures(tk.Frame):
         
 class Temprature_history(tk.Frame):
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg="black")
 
-        self.label1 = Label(self, font=('Helvetica', 20), fg="white", bg="black", text="Temprature history!")
+        self.label1 = Label(self, font=('Helvetica', 30), fg="white", bg="black", text="Temprature history!")
         self.label1.pack()
+        self.stats_frame = tk.Frame(self, bg="black")
+        self.stats_frame.pack(side="bottom")
+        self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.max_tmp_label.pack()
+        self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.min_tmp_label.pack()
+
+
+
+        self.calculate_stats()
         
     def calculate_stats(self):
-        out_temp_list, time_list = zip(*DBHandle.out_temp_history)
+        time_list, out_temp_list = zip(*DBHandle.out_temp_history)
         min_temp_24 = min(out_temp_list)
-        max_temp_24 = min(out_temp_list)
-        print(min_temp_24, max_temp_24)
-
-
+        max_temp_24 = max(out_temp_list)
+        time_from = min(time_list)
+        time_to = max(time_list)
+        self.min_tmp_label.config(text=min_temp_24)
+        self.max_tmp_label.config(text=max_temp_24)
+        self.stats_frame.after(10000, self.calculate_stats)
    
 class Widget(tk.Frame):
     def __init__(self, parent):
@@ -456,19 +468,12 @@ class StartPage(tk.Frame):
 
 class PageOne(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg="black")
         label = tk.Label(self, text="Page One!!!")
         label.pack(pady=10, padx=10)
 
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
         self.Temp_hist = Temprature_history(self)
-        self.Temp_hist.pack()
+        self.Temp_hist.pack(side="bottom")
         logger.debug("PageOne Started")
 
 
