@@ -9,7 +9,6 @@
 
 import os
 import glob
-import time
 import logging
 import logging.config
 import mysql.connector
@@ -102,18 +101,21 @@ class Tempratures():
         return '{:.1f}'.format( float(cpu)/1000 )
     def retrive_out_temp(self):
         try:
+            self.out_temp_history = []
             cursor = self.cnx.cursor(buffered=True)
             query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 10")# 288 times 5 minutes between inserts = 24 hours
             cursor.execute(query)
-            self.out_temp_history = cursor
+            for line in cursor:
+                self.out_temp_history.append(line)
             cursor.close()
             logger.debug("Out tempratures retrived")
-        except IndexError:
-            logger.error("Error!")
+        except NameError:
+            logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
+            self.connect_to_DB()
 
 if __name__ == '__main__':
     print('Script started as main')
     TMP = Tempratures()
     TMP.connect_to_DB()
     TMP.retrive_out_temp()
-
+    

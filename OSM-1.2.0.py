@@ -372,6 +372,8 @@ class Temprature_history(tk.Frame):
 
         self.label1 = Label(self, font=('Helvetica', 20), fg="white", bg="black", text="Temprature history!")
         self.label1.pack()
+        
+        min_temp_24 = min(DBHandle.out_temp_history[1])
    
 class Widget(tk.Frame):
     def __init__(self, parent):
