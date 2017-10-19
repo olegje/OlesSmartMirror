@@ -366,7 +366,12 @@ class Tempratures(tk.Frame):
         DBHandle.retrive_out_temp()
         self.out_temp.after(300000, self.DB_communication)
         
+class Temprature_history(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
 
+        self.label1 = Label(self, font=('Helvetica', 20), fg="white", bg="black" text="Temprature history!")
+        self.label1.pack()
    
 class Widget(tk.Frame):
     def __init__(self, parent):
