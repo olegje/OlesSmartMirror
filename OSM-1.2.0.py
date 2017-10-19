@@ -373,7 +373,13 @@ class Temprature_history(tk.Frame):
         self.label1 = Label(self, font=('Helvetica', 20), fg="white", bg="black", text="Temprature history!")
         self.label1.pack()
         
-        min_temp_24 = min(DBHandle.out_temp_history[1])
+    def calculate_stats(self):
+        out_temp_list, time_list = zip(*DBHandle.out_temp_history)
+        min_temp_24 = min(out_temp_list)
+        max_temp_24 = min(out_temp_list)
+        print(min_temp_24, max_temp_24)
+
+
    
 class Widget(tk.Frame):
     def __init__(self, parent):
