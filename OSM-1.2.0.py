@@ -384,13 +384,14 @@ class Temprature_history(tk.Frame):
         self.calculate_stats()
         
     def calculate_stats(self):
+        degree_sign = u'\N{DEGREE CELSIUS}'
         time_list, out_temp_list = zip(*DBHandle.out_temp_history)
         min_temp_24 = min(out_temp_list)
         max_temp_24 = max(out_temp_list)
         time_from = min(time_list)
         time_to = max(time_list)
-        self.min_tmp_label.config(text=min_temp_24)
-        self.max_tmp_label.config(text=max_temp_24)
+        self.min_tmp_label.config(text="Min: %s" %min_temp_24 + degree_sign)
+        self.max_tmp_label.config(text="Max: %s" %max_temp_24 + degree_sign)
         self.stats_frame.after(10000, self.calculate_stats)
    
 class Widget(tk.Frame):
