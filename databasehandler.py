@@ -105,9 +105,9 @@ class Tempratures():
             cursor = self.cnx.cursor(buffered=True)
             query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 10")# 288 times 5 minutes between inserts = 24 hours
             cursor.execute(query)
-            logger.debug("Out tempratures retrived")
             self.out_temp_history = cursor
             cursor.close()
+            logger.debug("Out tempratures retrived")
         except IndexError:
             logger.error("Error!")
 
