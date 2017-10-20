@@ -375,7 +375,7 @@ class Temprature_history(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, bg="black")
 
-        self.label1 = Label(self, font=('Helvetica', 30), fg="white", bg="black", text="Temprature history!")
+        self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
         self.label1.pack()
         #Stats
         self.stats_frame = tk.Frame(self, bg="black")
@@ -390,8 +390,8 @@ class Temprature_history(tk.Frame):
         # Graph setup
         self.graph_frame = tk.Frame(self, bg="black")
         self.graph_frame.pack(side="bottom")
-        f = Figure(figsize=(17,8), dpi=100, facecolor="blue")
-        a = f.add_subplot(111, facecolor="red")
+        f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+        a = f.add_subplot(111, facecolor="black")
         a.plot(self.time_list,self.out_temp_list, "white")
         # Colorcode the tick tabs 
         a.tick_params(axis='x', colors='white')
@@ -405,14 +405,12 @@ class Temprature_history(tk.Frame):
         canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         
 
-
-
         
     def calculate_stats(self):
         degree_sign = u'\N{DEGREE CELSIUS}'
         time_list, out_temp_list = (zip(*DBHandle.out_temp_history))
-        self.time_list = list(time_list)
-        self.out_temp_list = list(out_temp_list)
+        self.time_list = list(time_list[::-1]) #last part reverse the list
+        self.out_temp_list = list(out_temp_list[::-1])
         min_temp_24 = min(out_temp_list)
         min_temp_time_idx = numpy.argmin(out_temp_list)
         max_temp_24 = max(out_temp_list)
