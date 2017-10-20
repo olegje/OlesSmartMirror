@@ -386,15 +386,19 @@ class Temprature_history(tk.Frame):
         self.min_tmp_label.pack()
         self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
         self.time_from_label.pack()
+        self.calculate_stats()
         # Graph setup
         self.graph_frame = tk.Frame(self, bg="black")
         self.graph_frame.pack(side="bottom")
-        f = Figure(figsize=(22,8), dpi=100, facecolor="black")
-        a = f.add_subplot(111, facecolor="black")
-        a.plot([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5], "white")
+        f = Figure(figsize=(17,8), dpi=100, facecolor="blue")
+        a = f.add_subplot(111, facecolor="red")
+        a.plot(self.time_list,self.out_temp_list, "white")
         # Colorcode the tick tabs 
         a.tick_params(axis='x', colors='white')
         a.tick_params(axis='y', colors='white')
+        #Set time on axis
+        myFmt = matplotlib.dates.DateFormatter('%H%M')
+        a.xaxis.set_major_formatter(myFmt)
 
         canvas = FigureCanvasTkAgg(f, self.graph_frame)
         canvas.show()
@@ -403,13 +407,12 @@ class Temprature_history(tk.Frame):
 
 
 
-        self.calculate_stats()
         
     def calculate_stats(self):
         degree_sign = u'\N{DEGREE CELSIUS}'
         time_list, out_temp_list = (zip(*DBHandle.out_temp_history))
-        #time_list = list(time_list)
-        #out_temp_list = list(out_temp_list)
+        self.time_list = list(time_list)
+        self.out_temp_list = list(out_temp_list)
         min_temp_24 = min(out_temp_list)
         min_temp_time_idx = numpy.argmin(out_temp_list)
         max_temp_24 = max(out_temp_list)
