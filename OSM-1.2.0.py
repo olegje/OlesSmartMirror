@@ -47,6 +47,10 @@ logging.config.fileConfig('logging.conf')
 logger = logging.getLogger('rotatingLogger')
 logger.info("Application started")
 import numpy
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
@@ -373,6 +377,7 @@ class Temprature_history(tk.Frame):
 
         self.label1 = Label(self, font=('Helvetica', 30), fg="white", bg="black", text="Temprature history!")
         self.label1.pack()
+        #Stats
         self.stats_frame = tk.Frame(self, bg="black")
         self.stats_frame.pack(side="bottom")
         self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
@@ -381,7 +386,19 @@ class Temprature_history(tk.Frame):
         self.min_tmp_label.pack()
         self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
         self.time_from_label.pack()
+        # Graph setup
+        self.graph_frame = tk.Frame(self, bg="black")
+        self.graph_frame.pack(side="bottom")
+        f = Figure(figsize=(22,8), dpi=100, facecolor="black")
+        a = f.add_subplot(111, facecolor="black")
+        a.plot([1,2,3,4,5,6,7,8],[5,6,1,3,8,9,3,5], "white")
+        # Colorcode the tick tabs 
+        a.tick_params(axis='x', colors='white')
+        a.tick_params(axis='y', colors='white')
 
+        canvas = FigureCanvasTkAgg(f, self.graph_frame)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         
 
 
