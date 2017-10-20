@@ -402,14 +402,14 @@ class Temprature_history(tk.Frame):
         self.min_tmp_label.config(text="Min: %s %s at %s" %(
                                             min_temp_24,
                                             degree_sign,
-                                            time_list[min_temp_time_idx].strftime("%H:%M")))
+                                            time_list[min_temp_time_idx].strftime("%d, %H:%M")))
         self.max_tmp_label.config(text="Max: %s %s at %s" %(
                                             max_temp_24,
                                             degree_sign,
-                                            time_list[max_temp_time_idx].strftime("%H:%M")))
+                                            time_list[max_temp_time_idx].strftime("%d, %H:%M")))
         self.time_from_label.config(text="Times from: %s - \n                %s" %(
-                                            time_from.strftime("%H:%M"),
-                                            time_to.strftime("%H:%M")))                                   
+                                            time_from.strftime("%d, %H:%M"),
+                                            time_to.strftime("%d, %H:%M")))                                   
         self.stats_frame.after(10000, self.calculate_stats)
    
 class Widget(tk.Frame):
