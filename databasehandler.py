@@ -103,7 +103,7 @@ class Tempratures():
         try:
             self.out_temp_history = []
             cursor = self.cnx.cursor(buffered=True)
-            query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 10")# 288 times 5 minutes between inserts = 24 hours
+            query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 288")# 288 times 5 minutes between inserts = 24 hours
             cursor.execute(query)
             for line in cursor:
                 self.out_temp_history.append(line)
