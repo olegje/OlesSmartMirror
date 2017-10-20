@@ -46,6 +46,7 @@ logging.config.fileConfig('logging.conf')
 # create logger
 logger = logging.getLogger('rotatingLogger')
 logger.info("Application started")
+import numpy
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
@@ -378,6 +379,10 @@ class Temprature_history(tk.Frame):
         self.max_tmp_label.pack()
         self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
         self.min_tmp_label.pack()
+        self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.time_from_label.pack()
+
+        
 
 
 
@@ -385,13 +390,26 @@ class Temprature_history(tk.Frame):
         
     def calculate_stats(self):
         degree_sign = u'\N{DEGREE CELSIUS}'
-        time_list, out_temp_list = zip(*DBHandle.out_temp_history)
+        time_list, out_temp_list = (zip(*DBHandle.out_temp_history))
+        #time_list = list(time_list)
+        #out_temp_list = list(out_temp_list)
         min_temp_24 = min(out_temp_list)
+        min_temp_time_idx = numpy.argmin(out_temp_list)
         max_temp_24 = max(out_temp_list)
+        max_temp_time_idx = numpy.argmax(out_temp_list)
         time_from = min(time_list)
         time_to = max(time_list)
-        self.min_tmp_label.config(text="Min: %s" %min_temp_24 + degree_sign)
-        self.max_tmp_label.config(text="Max: %s" %max_temp_24 + degree_sign)
+        self.min_tmp_label.config(text="Min: %s %s at %s" %(
+                                            min_temp_24,
+                                            degree_sign,
+                                            time_list[min_temp_time_idx]))
+        self.max_tmp_label.config(text="Max: %s %s at %s" %(
+                                            max_temp_24,
+                                            degree_sign,
+                                            time_list[max_temp_time_idx]))
+        self.time_from_label.config(text="Times from: %s - \n                %s" %(
+                                            time_from,
+                                            time_to))                                   
         self.stats_frame.after(10000, self.calculate_stats)
    
 class Widget(tk.Frame):
