@@ -390,19 +390,19 @@ class Temprature_history(tk.Frame):
         # Graph setup
         self.graph_frame = tk.Frame(self, bg="black")
         self.graph_frame.pack(side="bottom")
-        f = Figure(figsize=(17,8), dpi=100, facecolor="black")
-        a = f.add_subplot(111, facecolor="black")
-        a.plot(self.time_list,self.out_temp_list, "white")
+        self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+        self.a = self.f.add_subplot(111, facecolor="black")      
+        self.a.plot(self.time_list,self.out_temp_list, "white")
         # Colorcode the tick tabs 
-        a.tick_params(axis='x', colors='white')
-        a.tick_params(axis='y', colors='white')
+        self.a.tick_params(axis='x', colors='white')
+        self.a.tick_params(axis='y', colors='white')
         #Set time on axis
         myFmt = matplotlib.dates.DateFormatter('%H%M')
-        a.xaxis.set_major_formatter(myFmt)
-
-        canvas = FigureCanvasTkAgg(f, self.graph_frame)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.a.xaxis.set_major_formatter(myFmt)
+        self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
+        self.canvas.show()
+        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.draw_graph()
         
 
         
@@ -429,6 +429,11 @@ class Temprature_history(tk.Frame):
                                             time_from.strftime("%d, %H:%M"),
                                             time_to.strftime("%d, %H:%M")))                                   
         self.stats_frame.after(10000, self.calculate_stats)
+    def draw_graph(self):
+        self.a.plot(self.time_list,self.out_temp_list, "white")
+        self.canvas.draw()
+        print("Drawed graph")
+        self.graph_frame.after(5000, self.draw_graph)
    
 class Widget(tk.Frame):
     def __init__(self, parent):
