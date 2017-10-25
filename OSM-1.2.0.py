@@ -231,13 +231,13 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.config(image=photo2)
             self.wind_dir_label.image = photo2
 
-            self.period_frame.after(300000, self.get_wheather_data, period)
+            self.period_frame.after(500000, self.get_wheather_data, period)
         except Exception as err:
              #Replace with ValueError for debugging
             logger.error("Exception in get_wheather_data:  ")
             logger.error(err)
             self.period_label.config(text="cannot get weather")
-            self.period_frame.after(10000, self.get_wheather_data, period)
+            self.period_frame.after(60000, self.get_wheather_data, period)
 
     def get_period(self, period):
         forecast = self.root.find("forecast")
@@ -428,11 +428,11 @@ class Temprature_history(tk.Frame):
         self.time_from_label.config(text="Times from: %s - \n                %s" %(
                                             time_from.strftime("%d, %H:%M"),
                                             time_to.strftime("%d, %H:%M")))                                   
-        self.stats_frame.after(10000, self.calculate_stats)
+        self.stats_frame.after(22000, self.calculate_stats)
     def draw_graph(self):
         self.a.plot(self.time_list,self.out_temp_list, "white")
         self.canvas.draw()
-        self.graph_frame.after(10000, self.draw_graph)
+        self.graph_frame.after(51000, self.draw_graph)
    
 class Widget(tk.Frame):
     def __init__(self, parent):
