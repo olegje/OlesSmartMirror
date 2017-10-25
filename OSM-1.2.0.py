@@ -432,8 +432,7 @@ class Temprature_history(tk.Frame):
     def draw_graph(self):
         self.a.plot(self.time_list,self.out_temp_list, "white")
         self.canvas.draw()
-        print("Drawed graph")
-        self.graph_frame.after(5000, self.draw_graph)
+        self.graph_frame.after(10000, self.draw_graph)
    
 class Widget(tk.Frame):
     def __init__(self, parent):
