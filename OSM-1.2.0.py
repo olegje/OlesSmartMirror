@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 ########################################################################
-# Filename    : OSM-1.1.0.py
+# Filename    : OSM-1.2.0.py
 # Description : Main application
-# Author      : Gjengedal
-# modification: 18.06.2017
+# Author      : Ole Jonny Gjengedal
+# modification: 18.10.2017
 ########################################################################
 
-print("OSM.1.1.0")
+print("OSM.1.2.0")
 try:
     import Tkinter as tk
     from Tkinter import *
@@ -16,7 +16,7 @@ except ImportError:
     import tkinter as tk
     from tkinter import *
 import locale
-import time
+import time, datetime
 import threading
 from contextlib import contextmanager
 import os, platform
@@ -39,7 +39,18 @@ if platform.system().lower() == "linux":
     import RPi.GPIO as GPIO
 else:
     print("INFO: Mirrorbuttons not imported")
-
+import databasehandler
+import logging
+import logging.config
+logging.config.fileConfig('logging.conf')
+# create logger
+logger = logging.getLogger('rotatingLogger')
+logger.info("Application started")
+import numpy
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 # import more stuff
 # set variables / setup
 ole_ip = "192.168.11.102" # Static ip adress on phone
@@ -220,12 +231,13 @@ class Wheather_data(tk.Frame):
             self.wind_dir_label.config(image=photo2)
             self.wind_dir_label.image = photo2
 
-            self.period_frame.after(300000, self.get_wheather_data, period)
+            self.period_frame.after(500000, self.get_wheather_data, period)
         except Exception as err:
              #Replace with ValueError for debugging
-            print("Exception in get_wheather_data:  ", err)
+            logger.error("Exception in get_wheather_data:  ")
+            logger.error(err)
             self.period_label.config(text="cannot get weather")
-            self.period_frame.after(10000, self.get_wheather_data, period)
+            self.period_frame.after(60000, self.get_wheather_data, period)
 
     def get_period(self, period):
         forecast = self.root.find("forecast")
@@ -333,64 +345,94 @@ class Tempratures(tk.Frame):
         self.cpu_temp = Label(self, font=('Helvetica', 20), fg="white", bg="black")
         self.cpu_temp.pack(side=TOP, anchor="e")
         self.degree_sign = u'\N{DEGREE CELSIUS}'
-
-        os.system('modprobe w1-gpio')
-        os.system('modprobe w1-therm')
-        self.base_dir = '/sys/bus/w1/devices/'
-        try:
-            self.device_folder = glob.glob(self.base_dir + '28*')[0]
-            self.device_file = self.device_folder + '/w1_slave'
-        except IndexError:
-            print("INFO: unable to read Linux-path")
         self.update()
+        DBHandle.connect_to_DB()        
+        self.DB_communication()
 
-    def read_temp_raw(self):
-        try:
-            f = open(self.device_file, 'r')
-            lines = f.readlines()
-            f.close()
-        except AttributeError:
-            print("INFO: Not able to read temperature. Mocks lines instead")
-            lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
-        return lines
-
-    def read_temp(self):
-        lines = self.read_temp_raw()
-        while lines[0].strip()[-3:] != 'YES':
-            time.sleep(0.2)
-            lines = self.read_temp_raw()
-        equals_pos = lines[1].find('t=')
-        if equals_pos != -1:
-            temp_string = lines[1][equals_pos+2:]
-            temp_c = float(temp_string)
-            return '{:.1f}'.format( float(temp_c)/1000 )
-    def get_cpu_temp(self):     # get CPU temperature and store it into file "/sys/class/thermal/thermal_zone0/temp"
-        #tmp = open(r"/sys/class/thermal/thermal_zone0/temp")
-        try:
-            tmp = open('/sys/class/thermal/thermal_zone0/temp')
-            cpu = tmp.read()
-            tmp.close()
-        except IOError:
-            print("INFO: Not able to open file. Mocks lines instead")
-            cpu = 43850
-        
-        return '{:.1f}'.format( float(cpu)/1000 )
     def update(self):
         try:
-            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
-            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
             if out_temp_value >= 10:
                 self.out_temp.config(text="Ute: "+ str(out_temp_value) + self.degree_sign)
             else:
                 # adds an extra whitespace to line the number on screen       
                 self.out_temp.config(text="Ute:  "+ str(out_temp_value) + self.degree_sign)
         except NameError:
-            print("INFO: Unable to read temperatures, using mocked values instead")
+            logger.info("INFO: Unable to read temperatures, using mocked values instead")
             self.out_temp.config(text="Ute: "+ str(15) + self.degree_sign)
-            self.rom_temp.config(text="Rom: "+ self.read_temp() + self.degree_sign)
-            self.cpu_temp.config(text="Cpu: "+ self.get_cpu_temp() + self.degree_sign)
+            self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
+            self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
 
+        #DBHandle.insert_to_DB() # This causes tempratures to be recorded every minute. to often...
         self.out_temp.after(60000, self.update)
+    def DB_communication(self):
+        DBHandle.insert_to_DB()
+        DBHandle.retrive_out_temp()
+        self.out_temp.after(300000, self.DB_communication)
+        
+class Temprature_history(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent, bg="black")
+
+        self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
+        self.label1.pack()
+        #Stats
+        self.stats_frame = tk.Frame(self, bg="black")
+        self.stats_frame.pack(side="bottom")
+        self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.max_tmp_label.pack()
+        self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.min_tmp_label.pack()
+        self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.time_from_label.pack()
+        self.calculate_stats()
+        # Graph setup
+        self.graph_frame = tk.Frame(self, bg="black")
+        self.graph_frame.pack(side="bottom")
+        self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+        self.a = self.f.add_subplot(111, facecolor="black")      
+        self.a.plot(self.time_list,self.out_temp_list, "white")
+        # Colorcode the tick tabs 
+        self.a.tick_params(axis='x', colors='white')
+        self.a.tick_params(axis='y', colors='white')
+        #Set time on axis
+        myFmt = matplotlib.dates.DateFormatter('%H%M')
+        self.a.xaxis.set_major_formatter(myFmt)
+        self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
+        self.canvas.show()
+        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.draw_graph()
+        
+
+        
+    def calculate_stats(self):
+        degree_sign = u'\N{DEGREE CELSIUS}'
+        time_list, out_temp_list = (zip(*DBHandle.out_temp_history))
+        self.time_list = list(time_list[::-1]) #last part reverse the list
+        self.out_temp_list = list(out_temp_list[::-1])
+        min_temp_24 = min(out_temp_list)
+        min_temp_time_idx = numpy.argmin(out_temp_list)
+        max_temp_24 = max(out_temp_list)
+        max_temp_time_idx = numpy.argmax(out_temp_list)
+        time_from = min(time_list)
+        time_to = max(time_list)
+        self.min_tmp_label.config(text="Min: %s %s at %s" %(
+                                            min_temp_24,
+                                            degree_sign,
+                                            time_list[min_temp_time_idx].strftime("%d, %H:%M")))
+        self.max_tmp_label.config(text="Max: %s %s at %s" %(
+                                            max_temp_24,
+                                            degree_sign,
+                                            time_list[max_temp_time_idx].strftime("%d, %H:%M")))
+        self.time_from_label.config(text="Times from: %s - \n                %s" %(
+                                            time_from.strftime("%d, %H:%M"),
+                                            time_to.strftime("%d, %H:%M")))                                   
+        self.stats_frame.after(22000, self.calculate_stats)
+    def draw_graph(self):
+        self.a.plot(self.time_list,self.out_temp_list, "white")
+        self.canvas.draw()
+        self.graph_frame.after(51000, self.draw_graph)
    
 class Widget(tk.Frame):
     def __init__(self, parent):
@@ -422,7 +464,7 @@ class Master_GUI(tk.Tk):
             frame.grid_rowconfigure(0, weight=1)
             frame.grid_columnconfigure(0, weight=1)
 
-        self.show_frame(StartPage)
+        self.show_frame(PageOne)
 
     def show_frame(self, cont):
         frame = self.frames[cont] # local variable
@@ -467,17 +509,13 @@ class StartPage(tk.Frame):
 
 class PageOne(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, bg="black")
         label = tk.Label(self, text="Page One!!!")
         label.pack(pady=10, padx=10)
 
-        button1 = tk.Button(self, text="Back to Home",
-                            command=lambda: controller.show_frame(StartPage))
-        button1.pack()
-
-        button2 = tk.Button(self, text="Page Two",
-                            command=lambda: controller.show_frame(PageTwo))
-        button2.pack()
+        self.Temp_hist = Temprature_history(self)
+        self.Temp_hist.pack(side="bottom")
+        logger.debug("PageOne Started")
 
 
 class PageTwo(tk.Frame):
@@ -493,6 +531,8 @@ class PageTwo(tk.Frame):
         button2 = tk.Button(self, text="Page One",
                             command=lambda: controller.show_frame(PageOne))
         button2.pack()
+        logger.debug("PageTwo Started")
+
 class Buttons(threading.Thread, Master_GUI):
 
     def __init__(self, *args, **kwargs):
@@ -505,7 +545,7 @@ class Buttons(threading.Thread, Master_GUI):
             buttonControll = MB.ButtonControll()
             self.check_buttons(buttonControll)
         except NameError:
-            print("INFO: button thread ended")
+            logger.info("button thread ended")
         except KeyboardInterrupt:
             buttonControll.destroy()
             t2.exit()
@@ -513,7 +553,7 @@ class Buttons(threading.Thread, Master_GUI):
         while True:
             for pin in buttonControl.buttonPins:
                 if GPIO.input(pin) == GPIO.LOW:
-                    print("Pin% is preesed" %pin)
+                    logger.info("Pin% is preesed" %pin)
                     if pin == 11:
                         app.show_frame(StartPage)
                     elif pin == 13:
@@ -524,6 +564,7 @@ class Buttons(threading.Thread, Master_GUI):
                     pass
             time.sleep(0.2)
 if __name__ == "__main__":
+    DBHandle = databasehandler.Tempratures()
     app = Master_GUI()
     #t1 = Pinger(name="ping_thread")
     #t1.start()

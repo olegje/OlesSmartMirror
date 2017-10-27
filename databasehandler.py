@@ -1,20 +1,27 @@
-#!/usr/bin/python3
-
+#!/usr/bin/env python
 ########################################################################
-# Filename    : StoreRomTemp.py
-# Description : Script to store the rom temp to remote database
+# Filename    : Mirrorbuttons.py
+# Description : Controlling the connection to database
 # Author      : Gjengedal
-# modification: 07.06.2017
+# modification: 18.10.2017
 ########################################################################
+
 
 import os
 import glob
-import time
+import logging
+import logging.config
 import mysql.connector
 from mysql.connector import errorcode
 
+logging.config.fileConfig('logging.conf')
+
+# create logger
+logger = logging.getLogger('rotatingLogger')
+
 class Tempratures():
     def __init__(self):
+        logger.debug('Tempratures initialized')
 
         os.system('modprobe w1-gpio')
         os.system('modprobe w1-therm')
@@ -24,7 +31,7 @@ class Tempratures():
             self.device_folder = glob.glob(self.base_dir + '28*')[0]
             self.device_file = self.device_folder + '/w1_slave'
         except IndexError:
-            print("INFO: unable to read Linux-path")
+            logger.info("unable to read Linux-path")
     def connect_to_DB(self):
         try:
             config = {
@@ -37,41 +44,41 @@ class Tempratures():
             self.cnx = mysql.connector.connect(**config)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Something is wrong with your user name or password")
+                logger.error("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                print("Database does not exist")
+                logger.error("Database does not exist")
             else:
-                print(err)
+                logger.error(err)
         else:
             #self.cnx.close()
-            print("Connected to database")
+            logger.info("Connected to database")
     def insert_to_DB(self):
         try:
             cursor = self.cnx.cursor()
-            add_temprature = ("INSERT INTO Hallway "
+            add_temprature = ("INSERT INTO Hallway"
                               "(temprature) "
-                              "VALUES (%s)" %self.temp)
+                              "VALUES (%s)" %self.read_room_temp())
             # Insert new temprature
             cursor.execute(add_temprature)
             #emp_no = cursor.lastrowid
             # Make sure data is committed to the database
             self.cnx.commit()
             cursor.close()
+            logger.info('Rom temprature inserted')
         except:
-            print("Cannot insert, no connection to database, connecting...")
+            logger.warning("Cannot insert, no connection to database, connecting...")
             self.connect_to_DB()
-            print("Retrying insert in 5 minutes")
     def read_temp_raw(self):
         try:
             f = open(self.device_file, 'r')
             lines = f.readlines()
             f.close()
         except AttributeError:
-            print("INFO: Not able to read temperature. Mocks lines instead")
+            logger.info("Not able to read temperature. Mocks lines instead")
             lines = ['aa 01 4b 46 7f ff 06 10 84 : crc=84 YES', 'aa 01 4b 46 7f ff 06 10 84 t=26625']
         return lines
 
-    def read_temp(self):
+    def read_room_temp(self):
         lines = self.read_temp_raw()
         while lines[0].strip()[-3:] != 'YES':
             #time.sleep(0.2)
@@ -81,22 +88,34 @@ class Tempratures():
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string)
             return '{:.1f}'.format( float(temp_c)/1000 )
-
-    def update(self):
+    def get_cpu_temp(self):
 
         try:
-            self.temp = self.read_temp()
+            tmp = open('/sys/class/thermal/thermal_zone0/temp')
+            cpu = tmp.read()
+            tmp.close()
+        except IOError:
+            logger.info("INFO: Not able to open file. Mocks lines instead")
+            cpu = 66666
+        
+        return '{:.1f}'.format( float(cpu)/1000 )
+    def retrive_out_temp(self):
+        try:
+            self.out_temp_history = []
+            cursor = self.cnx.cursor(buffered=True)
+            query = ("SELECT `Time`, `Temprature` FROM `Outdoor` ORDER BY `Time` DESC LIMIT 288")# 288 times 5 minutes between inserts = 24 hours
+            cursor.execute(query)
+            for line in cursor:
+                self.out_temp_history.append(line)
+            cursor.close()
+            logger.debug("Out tempratures retrived")
         except NameError:
-            print("INFO: Unable to read temperatures")
-            self.temp = 22.1
+            logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
+            self.connect_to_DB()
 
 if __name__ == '__main__':
-    app = Tempratures()
-    app.connect_to_DB()
-    while True:
-        app.update()
-        app.insert_to_DB()
-        time.sleep(300)
-
-
-
+    print('Script started as main')
+    TMP = Tempratures()
+    TMP.connect_to_DB()
+    TMP.retrive_out_temp()
+    
