@@ -8,8 +8,8 @@
 # Bugs to fix:
 # Fix how the dbhandler deals whith server down time.
 # Fix so that the graph x and y limits updates
-# 
-#
+# Incrase updates and avoid unnasasary tasks that not shows anyways
+# Add log reading page
 ########################################################################
 
 print("OSM.1.2.0")
