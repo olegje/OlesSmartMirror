@@ -378,39 +378,37 @@ class Tempratures(tk.Frame):
         
 class Temprature_history(tk.Frame):
     def __init__(self, parent):
-        try:
-            tk.Frame.__init__(self, parent, bg="black")
+        tk.Frame.__init__(self, parent, bg="black")
 
-            self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
-            self.label1.pack()
-            #Stats
-            self.stats_frame = tk.Frame(self, bg="black")
-            self.stats_frame.pack(side="bottom")
-            self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-            self.max_tmp_label.pack()
-            self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-            self.min_tmp_label.pack()
-            self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-            self.time_from_label.pack()
-            self.calculate_stats()
-            # Graph setup
-            self.graph_frame = tk.Frame(self, bg="black")
-            self.graph_frame.pack(side="bottom")
-            self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
-            self.a = self.f.add_subplot(111, facecolor="black")      
-            self.a.plot(self.time_list,self.out_temp_list, "white")
-            # Colorcode the tick tabs 
-            self.a.tick_params(axis='x', colors='white')
-            self.a.tick_params(axis='y', colors='white')
-            #Set time on axis
-            myFmt = matplotlib.dates.DateFormatter('%H%M')
-            self.a.xaxis.set_major_formatter(myFmt)
-            self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
-            self.canvas.show()
-            self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-            self.draw_graph()
-        except AttributeError:
-            pass
+        self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
+        self.label1.pack()
+        #Stats
+        self.stats_frame = tk.Frame(self, bg="black")
+        self.stats_frame.pack(side="bottom")
+        self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.max_tmp_label.pack()
+        self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.min_tmp_label.pack()
+        self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+        self.time_from_label.pack()
+        self.calculate_stats()
+        # Graph setup
+        self.graph_frame = tk.Frame(self, bg="black")
+        self.graph_frame.pack(side="bottom")
+        self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+        self.a = self.f.add_subplot(111, facecolor="black")      
+        self.a.plot(self.time_list,self.out_temp_list, "white") #Moved to draw_graph
+        # Colorcode the tick tabs 
+        self.a.tick_params(axis='x', colors='white')
+        self.a.tick_params(axis='y', colors='white')
+        #Set time on axis
+        myFmt = matplotlib.dates.DateFormatter('%H%M')
+        self.a.xaxis.set_major_formatter(myFmt)
+        self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
+        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.canvas.show() #moved to draw graph
+        self.draw_graph()
+
         
 
         
@@ -437,18 +435,23 @@ class Temprature_history(tk.Frame):
             self.time_from_label.config(text="Times from: %s - \n                %s" %(
                                             time_from.strftime("%d, %H:%M"),
                                             time_to.strftime("%d, %H:%M")))
+            self.stats_frame.after(22000, self.calculate_stats)
         except ValueError:
-            logger.error("No temprature list to show")  
+            logger.error("DB connection error during startup")
             self.time_from_label.config(text="No history to show")                                                               
-        self.stats_frame.after(22000, self.calculate_stats)
+            self.stats_frame.after(150000, self.calculate_stats)
     def draw_graph(self):
-        self.a.plot(self.time_list,self.out_temp_list, "white")
-        self.a.set_xlim(auto=True)        
-        #self.a.set_xlim(min(self.time_list), max(self.time_list))
-        self.a.set_ylim(auto=True)
-        #self.a.set_ylim(min(self.out_temp_list), max(self.out_temp_list))
-        self.canvas.draw()
-        self.graph_frame.after(51000, self.draw_graph)
+        try:
+            self.a.plot(self.time_list,self.out_temp_list, "white")
+            self.a.set_xlim(auto=True)        
+            #self.a.set_xlim(min(self.time_list), max(self.time_list))
+            self.a.set_ylim(auto=True)
+            #self.a.set_ylim(min(self.out_temp_list), max(self.out_temp_list))
+            self.canvas.draw()
+            self.graph_frame.after(51000, self.draw_graph)
+        except AttributeError:
+            logger.error("Cant draw graph")
+            self.graph_frame.after(51000, self.draw_graph)   
    
 class Widget(tk.Frame):
     def __init__(self, parent):
