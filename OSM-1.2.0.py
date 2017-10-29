@@ -10,6 +10,8 @@
 # Fix so that the graph x and y limits updates
 # Incrase updates and avoid unnasasary tasks that not shows anyways
 # Add log reading page
+# Add db communication to seperate thread
+# Make out temp to show last reading from database
 ########################################################################
 
 print("OSM.1.2.0")
