@@ -109,13 +109,16 @@ class Tempratures():
                 self.out_temp_history.append(line)
             cursor.close()
             logger.debug("Out tempratures retrived")
-        except NameError:
-            logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
+        #except NameError:
+            #logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
+            #self.connect_to_DB()
+        except mysql.connector.Error as err:
+            logger.error(err)
             self.connect_to_DB()
 
 if __name__ == '__main__':
     print('Script started as main')
     TMP = Tempratures()
-    TMP.connect_to_DB()
+    #TMP.connect_to_DB()
     TMP.retrive_out_temp()
     
