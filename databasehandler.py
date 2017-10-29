@@ -48,7 +48,7 @@ class Tempratures():
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 logger.error("Database does not exist")
             else:
-                logger.error(err)
+                logger.error(err, "in connect_to_DB")
         else:
             #self.cnx.close()
             logger.info("Connected to database")
@@ -113,7 +113,8 @@ class Tempratures():
             logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
             self.connect_to_DB()
         except mysql.connector.Error as err:
-            logger.error(err)
+            logger.error(err, "in retrive out_temp_history")
+
 
 if __name__ == '__main__':
     print('Script started as main')

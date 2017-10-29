@@ -378,61 +378,68 @@ class Tempratures(tk.Frame):
         
 class Temprature_history(tk.Frame):
     def __init__(self, parent):
-        tk.Frame.__init__(self, parent, bg="black")
+        try:
+            tk.Frame.__init__(self, parent, bg="black")
 
-        self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
-        self.label1.pack()
-        #Stats
-        self.stats_frame = tk.Frame(self, bg="black")
-        self.stats_frame.pack(side="bottom")
-        self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-        self.max_tmp_label.pack()
-        self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-        self.min_tmp_label.pack()
-        self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
-        self.time_from_label.pack()
-        self.calculate_stats()
-        # Graph setup
-        self.graph_frame = tk.Frame(self, bg="black")
-        self.graph_frame.pack(side="bottom")
-        self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
-        self.a = self.f.add_subplot(111, facecolor="black")      
-        self.a.plot(self.time_list,self.out_temp_list, "white")
-        # Colorcode the tick tabs 
-        self.a.tick_params(axis='x', colors='white')
-        self.a.tick_params(axis='y', colors='white')
-        #Set time on axis
-        myFmt = matplotlib.dates.DateFormatter('%H%M')
-        self.a.xaxis.set_major_formatter(myFmt)
-        self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
-        self.canvas.show()
-        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.draw_graph()
+            self.label1 = Label(self, font=('Helvetica', 25), fg="white", bg="black", text="Utetempratur siste døgn")
+            self.label1.pack()
+            #Stats
+            self.stats_frame = tk.Frame(self, bg="black")
+            self.stats_frame.pack(side="bottom")
+            self.max_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+            self.max_tmp_label.pack()
+            self.min_tmp_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+            self.min_tmp_label.pack()
+            self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
+            self.time_from_label.pack()
+            self.calculate_stats()
+            # Graph setup
+            self.graph_frame = tk.Frame(self, bg="black")
+            self.graph_frame.pack(side="bottom")
+            self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+            self.a = self.f.add_subplot(111, facecolor="black")      
+            self.a.plot(self.time_list,self.out_temp_list, "white")
+            # Colorcode the tick tabs 
+            self.a.tick_params(axis='x', colors='white')
+            self.a.tick_params(axis='y', colors='white')
+            #Set time on axis
+            myFmt = matplotlib.dates.DateFormatter('%H%M')
+            self.a.xaxis.set_major_formatter(myFmt)
+            self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
+            self.canvas.show()
+            self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+            self.draw_graph()
+        except AttributeError:
+            pass
         
 
         
     def calculate_stats(self):
-        degree_sign = u'\N{DEGREE CELSIUS}'
-        time_list, out_temp_list = (zip(*DBHandle.out_temp_history))
-        self.time_list = list(time_list[::-1]) #last part reverse the list
-        self.out_temp_list = list(out_temp_list[::-1])
-        min_temp_24 = min(out_temp_list)
-        min_temp_time_idx = numpy.argmin(out_temp_list)
-        max_temp_24 = max(out_temp_list)
-        max_temp_time_idx = numpy.argmax(out_temp_list)
-        time_from = min(time_list)
-        time_to = max(time_list)
-        self.min_tmp_label.config(text="Min: %s %s at %s" %(
+        try:
+            degree_sign = u'\N{DEGREE CELSIUS}'
+            time_list, out_temp_list = (zip(*DBHandle.out_temp_history))    
+            self.time_list = list(time_list[::-1]) #last part reverse the list
+            self.out_temp_list = list(out_temp_list[::-1])
+            min_temp_24 = min(out_temp_list)
+            min_temp_time_idx = numpy.argmin(out_temp_list)
+            max_temp_24 = max(out_temp_list)
+            max_temp_time_idx = numpy.argmax(out_temp_list)
+            time_from = min(time_list)
+            time_to = max(time_list)
+            self.min_tmp_label.config(text="Min: %s %s at %s" %(
                                             min_temp_24,
                                             degree_sign,
                                             time_list[min_temp_time_idx].strftime("%d, %H:%M")))
-        self.max_tmp_label.config(text="Max: %s %s at %s" %(
+            self.max_tmp_label.config(text="Max: %s %s at %s" %(
                                             max_temp_24,
                                             degree_sign,
                                             time_list[max_temp_time_idx].strftime("%d, %H:%M")))
-        self.time_from_label.config(text="Times from: %s - \n                %s" %(
+            self.time_from_label.config(text="Times from: %s - \n                %s" %(
                                             time_from.strftime("%d, %H:%M"),
-                                            time_to.strftime("%d, %H:%M")))                                   
+                                            time_to.strftime("%d, %H:%M")))
+        except ValueError:
+            logger.error("No temprature list to show")  
+            self.time_from_label.config(text="No history to show")                                                               
         self.stats_frame.after(22000, self.calculate_stats)
     def draw_graph(self):
         self.a.plot(self.time_list,self.out_temp_list, "white")
