@@ -7,7 +7,7 @@
 # modification: 18.10.2017
 # Bugs to fix:
 # Fix how the dbhandler deals whith server down time.
-# Fix so that the graph x and y limits updates
+# Fix so that the graph x and y limits updates # to test
 # Incrase updates and avoid unnasasary tasks that not shows anyways
 # Add log reading page
 # Add db communication to seperate thread
@@ -445,10 +445,10 @@ class Temprature_history(tk.Frame):
     def draw_graph(self):
         try:
             self.a.plot(self.time_list,self.out_temp_list, "white")
-            self.a.set_xlim(auto=True)        
-            #self.a.set_xlim(min(self.time_list), max(self.time_list))
+            self.a.set_xdata(self.time_list, self.time_list)
+            self.a.set_ydata(self.out_temp_list, self.out_temp_list)
+            self.a.set_xlim(auto=True)
             self.a.set_ylim(auto=True)
-            #self.a.set_ylim(min(self.out_temp_list), max(self.out_temp_list))
             self.canvas.draw()
             self.graph_frame.after(51000, self.draw_graph)
         except AttributeError:
