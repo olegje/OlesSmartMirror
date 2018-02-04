@@ -353,9 +353,6 @@ class Tempratures(tk.Frame):
         self.cpu_temp.pack(side=TOP, anchor="e")
         self.degree_sign = u'\N{DEGREE CELSIUS}'
         self.update()
-        DBHandle.connect_to_DB()        
-        self.DB_communication()
-
     def update(self):
         try:
             self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
@@ -371,23 +368,8 @@ class Tempratures(tk.Frame):
             self.rom_temp.config(text="Rom: "+ DBHandle.read_room_temp() + self.degree_sign)
             self.cpu_temp.config(text="Cpu: "+ DBHandle.get_cpu_temp() + self.degree_sign)
 
-        #DBHandle.insert_to_DB() # This causes tempratures to be recorded every minute. to often...
         self.out_temp.after(60000, self.update)
-    def DB_communication(self):
-        # tror jeg må flytte denne til en annen tråd for å unngå .after trøbbel og heller bruke time.sleep.
-        # pr nå vil ingen prøve å reconnecte databasen.
-        if DBHandle.server_status == True: # True if server connected on fist time
-            DBHandle.insert_to_DB()
-            DBHandle.retrive_out_temp()
-            self.out_temp.after(300000, self.DB_communication)
-        else:
-            logger.info("No db connection")          
-            #logger.info("Retry DB connection in 30 sec")
-            #self.out_temp.after(300000, DBHandle.connect_to_DB()) # retry connection
-            #self.out_temp.after(10000, self.DB_communication()) # Tests connection
             
-
-
         
 class Temprature_history(tk.Frame):
     def __init__(self, parent):
@@ -474,6 +456,24 @@ class Temprature_history(tk.Frame):
             logger.error("Cant draw graph")
             self.graph_frame.after(51000, self.draw_graph)   
    
+class DB_coms(threading.Thread):
+
+    def __init__(self, *args, **kwargs):
+
+        threading.Thread.__init__(self, *args, **kwargs)
+        self.daemon = True
+    def DB_communication(self):
+        while True:
+            if DBHandle.server_status == True: # True if server connected on fist time
+                DBHandle.insert_to_DB()
+                DBHandle.retrive_out_temp()
+                time.sleep(60)
+            else:
+                logger.info("No db connection")
+                DBHandle.connect_to_DB()          
+                time.sleep(120)    
+    def run(self):
+        self.DB_communication()   
 class Widget(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -608,6 +608,8 @@ if __name__ == "__main__":
     app = Master_GUI()
     #t1 = Pinger(name="ping_thread")
     #t1.start()
+    t3 = DB_coms(name="DB_coms_thread")
+    t3.start()
     t2 = Buttons(name="Buttons_thread")
     t2.start()
     app.mainloop()
