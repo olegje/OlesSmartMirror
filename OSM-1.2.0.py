@@ -389,7 +389,8 @@ class Temprature_history(tk.Frame):
         self.graph_setup()
     def graph_setup(self):    
             # Graph setup
-            if DBHandle.server_status == True:
+            if DBHandle.server_status == True and hasattr(DBHandle, "out_temp_history"):
+                self.label1.config(text="Utetempratur siste døgn")
                 self.calculate_stats()
                 self.graph_frame = tk.Frame(self, bg="black")
                 self.graph_frame.pack(side="bottom")
@@ -439,20 +440,21 @@ class Temprature_history(tk.Frame):
                                             time_from.strftime("%d, %H:%M"),
                                             time_to.strftime("%d, %H:%M")))
             self.stats_frame.after(22000, self.calculate_stats)
-        except ValueError:
-            logger.error("DB connection error during startup")
-            self.time_from_label.config(text="No history to show")                                                               
-            self.stats_frame.after(150000, self.calculate_stats)
+        except ArithmeticError:
+            #logger.error("DB connection error during startup")
+            #self.time_from_label.config(text="No history to show")                                                               
+            #self.stats_frame.after(150000, self.calculate_stats)
+            pass
     def draw_graph(self):
         try:
             self.a.plot(self.time_list,self.out_temp_list, "white")
-            self.a.set_xdata(self.time_list, self.time_list)
-            self.a.set_ydata(self.out_temp_list, self.out_temp_list)
+            #self.a.set_xdata(self.time_list, self.time_list) # AttributeError: 'AxesSubplot' object has no attribute 'set_xdata'
+            #self.a.set_ydata(self.out_temp_list, self.out_temp_list)
             self.a.set_xlim(auto=True)
             self.a.set_ylim(auto=True)
             self.canvas.draw()
             self.graph_frame.after(51000, self.draw_graph)
-        except AttributeError:
+        except ArithmeticError:
             logger.error("Cant draw graph")
             self.graph_frame.after(51000, self.draw_graph)   
    
@@ -463,6 +465,7 @@ class DB_coms(threading.Thread):
         threading.Thread.__init__(self, *args, **kwargs)
         self.daemon = True
     def DB_communication(self):
+        DBHandle.connect_to_DB()
         while True:
             if DBHandle.server_status == True: # True if server connected on fist time
                 DBHandle.insert_to_DB()
