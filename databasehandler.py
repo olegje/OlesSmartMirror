@@ -3,7 +3,7 @@
 # Filename    : Mirrorbuttons.py
 # Description : Controlling the connection to database
 # Author      : Gjengedal
-# modification: 18.10.2017
+# modification: 04.02.2018
 ########################################################################
 
 
@@ -27,6 +27,7 @@ class Tempratures():
         os.system('modprobe w1-therm')
         self.base_dir = '/sys/bus/w1/devices/'
         self.temp = 22.1
+        self.server_status = False
         try:
             self.device_folder = glob.glob(self.base_dir + '28*')[0]
             self.device_file = self.device_folder + '/w1_slave'
@@ -47,10 +48,14 @@ class Tempratures():
                 logger.error("Something is wrong with your user name or password")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 logger.error("Database does not exist")
+            elif err.errno == errorcode.CR_CONN_HOST_ERROR:
+                logger.error(err) 
+                self.server_status = False   
             else:
-                logger.error(err, "in connect_to_DB")
+                logger.error(err)
         else:
             #self.cnx.close()
+            self.server_status = True
             logger.info("Connected to database")
     def insert_to_DB(self):
         try:
@@ -66,8 +71,8 @@ class Tempratures():
             cursor.close()
             logger.info('Rom temprature inserted')
         except:
-            logger.warning("Cannot insert, no connection to database, connecting...")
-            self.connect_to_DB()
+            logger.warning("Cannot insert, no connection to database.")
+            #self.connect_to_DB()
     def read_temp_raw(self):
         try:
             f = open(self.device_file, 'r')
@@ -111,9 +116,9 @@ class Tempratures():
             logger.debug("Out tempratures retrived")
         except AttributeError:
             logger.warning("Cannot retrive outdoor temp, no connection to database, connecting...")
-            self.connect_to_DB()
+            #self.connect_to_DB() # removed to make app run smoother
         except mysql.connector.Error as err:
-            logger.error(err, "in retrive out_temp_history")
+            logger.error(err)
 
 
 if __name__ == '__main__':

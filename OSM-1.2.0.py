@@ -4,7 +4,7 @@
 # Filename    : OSM-1.2.0.py
 # Description : Main application
 # Author      : Ole Jonny Gjengedal
-# modification: 18.10.2017
+# modification: 04.02.2018
 # Bugs to fix:
 # Fix how the dbhandler deals whith server down time.
 # Fix so that the graph x and y limits updates # to test
@@ -374,9 +374,20 @@ class Tempratures(tk.Frame):
         #DBHandle.insert_to_DB() # This causes tempratures to be recorded every minute. to often...
         self.out_temp.after(60000, self.update)
     def DB_communication(self):
-        DBHandle.insert_to_DB()
-        DBHandle.retrive_out_temp()
-        self.out_temp.after(300000, self.DB_communication)
+        # tror jeg må flytte denne til en annen tråd for å unngå .after trøbbel og heller bruke time.sleep.
+        # pr nå vil ingen prøve å reconnecte databasen.
+        if DBHandle.server_status == True: # True if server connected on fist time
+            DBHandle.insert_to_DB()
+            DBHandle.retrive_out_temp()
+            self.out_temp.after(300000, self.DB_communication)
+        else:
+            logger.info("No db connection")          
+            #logger.info("Retry DB connection in 30 sec")
+            #self.out_temp.after(300000, DBHandle.connect_to_DB()) # retry connection
+            #self.out_temp.after(10000, self.DB_communication()) # Tests connection
+            
+
+
         
 class Temprature_history(tk.Frame):
     def __init__(self, parent):
@@ -393,29 +404,37 @@ class Temprature_history(tk.Frame):
         self.min_tmp_label.pack()
         self.time_from_label = Label(self.stats_frame, font=('Helvetica', 20), fg="white", bg="black")
         self.time_from_label.pack()
-        self.calculate_stats()
-        # Graph setup
-        self.graph_frame = tk.Frame(self, bg="black")
-        self.graph_frame.pack(side="bottom")
-        self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
-        self.a = self.f.add_subplot(111, facecolor="black")      
-        self.a.plot(self.time_list,self.out_temp_list, "white") #Moved to draw_graph
-        # Colorcode the tick tabs 
-        self.a.tick_params(axis='x', colors='white')
-        self.a.tick_params(axis='y', colors='white')
-        #Set time on axis
-        myFmt = matplotlib.dates.DateFormatter('%H%M')
-        self.a.xaxis.set_major_formatter(myFmt)
-        self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
-        self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-        self.canvas.show() #moved to draw graph
-        self.draw_graph()
+        self.graph_setup()
+    def graph_setup(self):    
+            # Graph setup
+            if DBHandle.server_status == True:
+                self.calculate_stats()
+                self.graph_frame = tk.Frame(self, bg="black")
+                self.graph_frame.pack(side="bottom")
+                self.f = Figure(figsize=(17,8), dpi=100, facecolor="black")
+                self.a = self.f.add_subplot(111, facecolor="black")      
+                self.a.plot(self.time_list,self.out_temp_list, "white") #Moved to draw_graph
+                # Colorcode the tick tabs 
+                self.a.tick_params(axis='x', colors='white')
+                self.a.tick_params(axis='y', colors='white')
+                #Set time on axis
+                myFmt = matplotlib.dates.DateFormatter('%H%M')
+                self.a.xaxis.set_major_formatter(myFmt)
+                self.canvas = FigureCanvasTkAgg(self.f, self.graph_frame)
+                self.canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+                self.canvas.show() #moved to draw graph
+                self.draw_graph()
+            else:
+                logger.warning("No DB connection, will not draw graph")
+                self.label1.config(text="No temp history")
+                self.label1.after(10000, self.graph_setup)
+   
 
         
 
         
     def calculate_stats(self):
-        try:
+        try:      
             degree_sign = u'\N{DEGREE CELSIUS}'
             time_list, out_temp_list = (zip(*DBHandle.out_temp_history))    
             self.time_list = list(time_list[::-1]) #last part reverse the list
