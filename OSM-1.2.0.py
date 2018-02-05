@@ -440,11 +440,10 @@ class Temprature_history(tk.Frame):
                                             time_from.strftime("%d, %H:%M"),
                                             time_to.strftime("%d, %H:%M")))
             self.stats_frame.after(22000, self.calculate_stats)
-        except ArithmeticError:
-            #logger.error("DB connection error during startup")
+        except ValueError:
+            logger.error("Vaulerror, need more than 1 value to unpack")
             #self.time_from_label.config(text="No history to show")                                                               
-            #self.stats_frame.after(150000, self.calculate_stats)
-            pass
+            self.stats_frame.after(10000, self.calculate_stats)
     def draw_graph(self):
         try:
             self.a.plot(self.time_list,self.out_temp_list, "white")
